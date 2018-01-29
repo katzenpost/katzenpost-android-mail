@@ -51,7 +51,6 @@ dependencies {
 
 android {
     compileSdkVersion androidCompileSdkVersion.toInteger()
-    buildToolsVersion androidBuildToolsVersion
 
     defaultConfig {
         applicationId "org.mixnetworks.katzenpost.mail"

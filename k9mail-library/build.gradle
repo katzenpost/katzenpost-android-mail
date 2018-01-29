@@ -36,7 +36,6 @@ dependencies {
 
 android {
     compileSdkVersion androidCompileSdkVersion.toInteger()
-    buildToolsVersion androidBuildToolsVersion
 
     defaultConfig {
         minSdkVersion 15
