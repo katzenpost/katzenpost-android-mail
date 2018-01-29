@@ -2,17 +2,37 @@
 
 This is a Katzenpost client, based on [K-9 Mail](https://github.com/k9mail/k-9).
 
-## License
+# Build Instructions
 
-    Licensed under the Apache License, Version 2.0 (the "License");
-    you may not use this file except in compliance with the License.
-    You may obtain a copy of the License at
+Building the project depends on the [Android SDK](https://developer.android.com/studio/index.html), [Android NDK](https://developer.android.com/ndk/index.html), [Go 1.7+](https://golang.org/), and [gomobile](https://github.com/golang/go/wiki/Mobile).
 
-       http://www.apache.org/licenses/LICENSE-2.0
+## Prepare Toolchain
 
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
+1. Download Android SDK https://developer.android.com/sdk/download.html
+2. Extract SDK to $HOME/android\_sdk
+3. Download Android NDK 16.1 (or newer) https://developer.android.com/ndk/downloads/index.html
+4. Extract NDK to $HOME/android\_sdk/ndk-bundle
+5. Install Go 1.7 https://golang.org/doc/install
+6. Add to PATH: $HOME/android\_sdk/platform\_tools and $HOME/android\_sdk/tools
+7. `export ANDROID_HOME=~/android_sdk`
+8. `git clone github.com/katzenpost/katzenpost-android-mail`
+
+## Prepare Gomobile
+
+1. Set a GOPATH environment variable
+2. `go get golang.org/x/mobile/cmd/gomobile`
+3. `gomobile init -ndk $HOME/android\_sdk/ndk-bundle`
+
+## Prepare Repository and Compile Native Bindings
+
+1. `cd katzenpost-android-mail`
+2. `mkdir bindings; cd bindings`
+3. `go get -v github.com/katzenpost/bindings/java`
+4. `gomobile bind -v -target android github.com/katzenpost/bindings/java`
+
+## Compile application
+
+1. `./gradlew`
+2. `./gradlew k9mail:assembleDebug`
+3. `adb install -r app/build/outputs/apk/fcm/debug/app-fcm-debug.apk`
 
