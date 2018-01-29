@@ -54,11 +54,11 @@ android {
     buildToolsVersion androidBuildToolsVersion
 
     defaultConfig {
-        applicationId "com.fsck.k9"
-        testApplicationId "com.fsck.k9.tests"
+        applicationId "org.mixnetworks.katzenpost.mail"
+        testApplicationId "org.mixnetworks.katzenpost.mail.tests"
 
-        versionCode 25000
-        versionName '5.500-SNAPSHOT'
+        versionCode 1
+        versionName '1.0'
 
         minSdkVersion 15
         targetSdkVersion 22
