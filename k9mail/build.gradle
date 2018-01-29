@@ -12,6 +12,9 @@ if (rootProject.testCoverage) {
 
 repositories {
     jcenter()
+    flatDir {
+        dirs '../bindings'
+    }
 }
 
 //noinspection GroovyAssignabilityCheck
@@ -39,6 +42,8 @@ dependencies {
     compile 'com.squareup.moshi:moshi:1.2.0'
     compile "com.jakewharton.timber:timber:${timberVersion}"
     compile 'net.jcip:jcip-annotations:1.0'
+
+    compile 'katzenpost:kpclient:dev@aar'
 
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 
