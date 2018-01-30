@@ -15,6 +15,14 @@ project.ext {
     optimizeForDevelopment = project.hasProperty('optimizeForDevelopment') && optimizeForDevelopment == 'true'
 }
 
+allprojects {
+    repositories {
+        flatDir {
+            dirs '../bindings'
+        }
+    }
+}
+
 subprojects {
     project.plugins.whenPluginAdded { plugin ->
         if ("com.android.build.gradle.AppPlugin".equals(plugin.class.name) ||
