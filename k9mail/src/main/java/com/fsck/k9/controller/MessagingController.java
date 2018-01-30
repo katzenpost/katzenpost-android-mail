@@ -60,6 +60,7 @@ import com.fsck.k9.controller.MessagingControllerCommands.PendingMoveOrCopy;
 import com.fsck.k9.controller.MessagingControllerCommands.PendingSetFlag;
 import com.fsck.k9.controller.ProgressBodyFactory.ProgressListener;
 import com.fsck.k9.controller.imap.ImapMessageStore;
+import com.fsck.k9.controller.katzenpost.KatzenpostMessageStore;
 import com.fsck.k9.helper.Contacts;
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.AuthenticationFailedException;
@@ -86,6 +87,7 @@ import com.fsck.k9.mail.internet.MimeUtility;
 import com.fsck.k9.mail.power.TracingPowerManager;
 import com.fsck.k9.mail.power.TracingPowerManager.TracingWakeLock;
 import com.fsck.k9.mail.store.pop3.Pop3Store;
+import com.fsck.k9.mail.transport.katzenpost.KatzenpostTransport;
 import com.fsck.k9.mailstore.LocalFolder;
 import com.fsck.k9.mailstore.LocalFolder.MoreMessages;
 import com.fsck.k9.mailstore.LocalMessage;
@@ -143,6 +145,7 @@ public class MessagingController {
     private final TransportProvider transportProvider;
 
     private ImapMessageStore imapMessageStore;
+    private KatzenpostMessageStore katzenpostMessageStore;
 
 
     private MessagingListener checkMailListener = null;
@@ -258,7 +261,12 @@ public class MessagingController {
     }
 
     private RemoteMessageStore getRemoteMessageStore(Account account) {
-        return account.getStoreUri().startsWith("imap") ? getImapMessageStore() : null;
+        if (account.getStoreUri().startsWith("imap")) {
+            return getImapMessageStore();
+        } else if (account.getStoreUri().startsWith("katzenpost")) {
+            return getKatzenpostMessageStore();
+        }
+        return null;
     }
 
     private ImapMessageStore getImapMessageStore() {
@@ -269,6 +277,13 @@ public class MessagingController {
         return imapMessageStore;
     }
 
+    private KatzenpostMessageStore getKatzenpostMessageStore() {
+        if (katzenpostMessageStore == null) {
+            katzenpostMessageStore = new KatzenpostMessageStore(context, this, notificationController);
+        }
+
+        return katzenpostMessageStore;
+    }
 
     public void addListener(MessagingListener listener) {
         listeners.add(listener);
@@ -2564,7 +2579,12 @@ public class MessagingController {
             Timber.i("Scanning folder '%s' (%d) for messages to send",
                     account.getOutboxFolderName(), localFolder.getDatabaseId());
 
-            Transport transport = transportProvider.getTransport(K9.app, account);
+            Transport transport;
+            if (account.getTransportUri().startsWith("katzenpost")) {
+                transport = new KatzenpostTransport(account);
+            } else {
+                transport = transportProvider.getTransport(K9.app, account);
+            }
 
             for (LocalMessage message : localMessages) {
                 if (message.isSet(Flag.DELETED)) {

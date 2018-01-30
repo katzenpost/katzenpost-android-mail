@@ -214,8 +214,7 @@ public class AccountSetupBasics extends K9Activity
 
         boolean valid = Utility.requiredFieldValid(mEmailView)
                 && ((!clientCertificateChecked && Utility.requiredFieldValid(mPasswordView))
-                        || (clientCertificateChecked && clientCertificateAlias != null))
-                && mEmailValidator.isValidAddressOnly(email);
+                        || (clientCertificateChecked && clientCertificateAlias != null));
 
         mNextButton.setEnabled(valid);
         mManualSetupButton.setEnabled(valid);

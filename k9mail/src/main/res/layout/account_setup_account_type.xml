@@ -42,4 +42,13 @@
         android:layout_gravity="center_horizontal"
         android:padding="10dip"
         />
+    <Button
+        android:id="@+id/katzenpost"
+        android:text="Katzenpost"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:minWidth="@dimen/button_minWidth"
+        android:layout_gravity="center_horizontal"
+        android:padding="10dip"
+        />
 </LinearLayout>

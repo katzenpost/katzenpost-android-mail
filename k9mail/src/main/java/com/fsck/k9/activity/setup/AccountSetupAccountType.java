@@ -1,23 +1,25 @@
 package com.fsck.k9.activity.setup;
 
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import timber.log.Timber;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
+
 import com.fsck.k9.Account;
 import com.fsck.k9.Preferences;
 import com.fsck.k9.R;
+import com.fsck.k9.activity.Accounts;
 import com.fsck.k9.activity.K9Activity;
 import com.fsck.k9.helper.EmailHelper;
 import com.fsck.k9.mail.ServerSettings.Type;
 import com.fsck.k9.setup.ServerNameSuggester;
-
-import java.net.URI;
-import java.net.URISyntaxException;
+import timber.log.Timber;
 
 import static com.fsck.k9.mail.ServerSettings.Type.IMAP;
 import static com.fsck.k9.mail.ServerSettings.Type.POP3;
@@ -52,6 +54,7 @@ public class AccountSetupAccountType extends K9Activity implements OnClickListen
         findViewById(R.id.pop).setOnClickListener(this);
         findViewById(R.id.imap).setOnClickListener(this);
         findViewById(R.id.webdav).setOnClickListener(this);
+        findViewById(R.id.katzenpost).setOnClickListener(this);
 
         String accountUuid = getIntent().getStringExtra(EXTRA_ACCOUNT);
         mAccount = Preferences.getPreferences(this).getAccount(accountUuid);
@@ -72,6 +75,12 @@ public class AccountSetupAccountType extends K9Activity implements OnClickListen
         URI transportUri = new URI("smtp+tls+", transportUriForDecode.getUserInfo(), suggestedTransportServerName,
                 transportUriForDecode.getPort(), null, null, null);
         mAccount.setTransportUri(transportUri.toString());
+    }
+
+    private void setupKatzenpost() throws URISyntaxException {
+        mAccount.setStoreUri("katzenpost:bob@ramix");
+        mAccount.setTransportUri("katzenpost:bob@ramix");
+        mAccount.setName("Katzenpost");
     }
 
     private void setupDav() throws URISyntaxException {
@@ -113,6 +122,13 @@ public class AccountSetupAccountType extends K9Activity implements OnClickListen
                 case R.id.webdav: {
                     setupDav();
                     break;
+                }
+                case R.id.katzenpost: {
+                    setupKatzenpost();
+                    mAccount.save(Preferences.getPreferences(this));
+                    Accounts.listAccounts(this);
+                    finish();
+                    return;
                 }
             }
         } catch (Exception ex) {

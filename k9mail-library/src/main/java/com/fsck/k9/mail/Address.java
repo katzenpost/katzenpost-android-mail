@@ -76,6 +76,20 @@ public class Address implements Serializable {
         return mAddress;
     }
 
+    public String getLocalpart() {
+        if (mAddress == null) {
+            return null;
+        }
+
+        int hostIdx = mAddress.lastIndexOf("@");
+
+        if (hostIdx == -1) {
+            return null;
+        }
+
+        return mAddress.substring(0, hostIdx);
+    }
+
     public String getHostname() {
         if (mAddress == null) {
             return null;
