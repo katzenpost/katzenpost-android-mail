@@ -11,6 +11,7 @@ import com.fsck.k9.Account;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.controller.MessagingListener;
 import com.fsck.k9.controller.RemoteMessageStore;
+import com.fsck.k9.mail.Flag;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.internet.MimeMessage;
@@ -72,8 +73,10 @@ public class KatzenpostMessageStore implements RemoteMessageStore {
 
         int newMessages = 0;
         while (true) {
-            String rawMessage = remoteStore.getMessage(1000L);
+            Timber.d("Checking for Katzenpost message...");
+            String rawMessage = remoteStore.getMessage(3L);
             if (rawMessage == null) {
+                Timber.d("Timeout!");
                 break;
             }
 
@@ -82,6 +85,7 @@ public class KatzenpostMessageStore implements RemoteMessageStore {
 
             String uid = message.getUid();
             LocalMessage localMessage = localFolder.getMessage(uid);
+            localMessage.setFlag(Flag.X_DOWNLOADED_FULL, true);
 
             for (MessagingListener l : getListeners(listener)) {
                 l.synchronizeMailboxNewMessage(account, folder, localMessage);
@@ -100,7 +104,6 @@ public class KatzenpostMessageStore implements RemoteMessageStore {
         for (MessagingListener l : getListeners(listener)) {
             l.synchronizeMailboxFinished(account, folder, 123, newMessages);
         }
-
     }
 
     private Set<MessagingListener> getListeners(MessagingListener listener) {

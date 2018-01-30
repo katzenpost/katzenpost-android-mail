@@ -1,6 +1,8 @@
 package com.fsck.k9.mail.store;
 
 
+import java.io.File;
+
 import com.fsck.k9.mail.NetworkType;
 
 public interface StoreConfig {

@@ -2579,12 +2579,7 @@ public class MessagingController {
             Timber.i("Scanning folder '%s' (%d) for messages to send",
                     account.getOutboxFolderName(), localFolder.getDatabaseId());
 
-            Transport transport;
-            if (account.getTransportUri().startsWith("katzenpost")) {
-                transport = new KatzenpostTransport(account);
-            } else {
-                transport = transportProvider.getTransport(K9.app, account);
-            }
+            Transport transport = transportProvider.getTransport(K9.app, account);
 
             for (LocalMessage message : localMessages) {
                 if (message.isSet(Flag.DELETED)) {

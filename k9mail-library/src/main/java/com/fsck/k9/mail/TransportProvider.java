@@ -6,8 +6,9 @@ import android.content.Context;
 import com.fsck.k9.mail.oauth.OAuth2TokenProvider;
 import com.fsck.k9.mail.ssl.DefaultTrustedSocketFactory;
 import com.fsck.k9.mail.store.StoreConfig;
-import com.fsck.k9.mail.transport.smtp.SmtpTransport;
 import com.fsck.k9.mail.transport.WebDavTransport;
+import com.fsck.k9.mail.transport.katzenpost.KatzenpostTransport;
+import com.fsck.k9.mail.transport.smtp.SmtpTransport;
 
 public class TransportProvider {
     private static TransportProvider transportProvider = new TransportProvider();
@@ -24,6 +25,8 @@ public class TransportProvider {
             return new SmtpTransport(storeConfig, new DefaultTrustedSocketFactory(context), oauth2TokenProvider);
         } else if (uri.startsWith("webdav")) {
             return new WebDavTransport(storeConfig);
+        } else if (uri.startsWith("katzenpost")) {
+            return new KatzenpostTransport(storeConfig, context);
         } else {
             throw new MessagingException("Unable to locate an applicable Transport for " + uri);
         }

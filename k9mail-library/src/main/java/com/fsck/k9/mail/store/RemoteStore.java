@@ -63,7 +63,7 @@ public abstract class RemoteStore extends Store {
             } else if (uri.startsWith("webdav")) {
                 store = new WebDavStore(storeConfig, new WebDavHttpClient.WebDavHttpClientFactory());
             } else if (uri.startsWith("katzenpost")) {
-                store = new KatzenpostStore(storeConfig);
+                store = new KatzenpostStore(storeConfig, context);
             }
 
             if (store != null) {
