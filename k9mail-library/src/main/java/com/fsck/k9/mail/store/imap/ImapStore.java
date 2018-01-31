@@ -25,7 +25,7 @@ import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.NetworkType;
 import com.fsck.k9.mail.PushReceiver;
 import com.fsck.k9.mail.Pusher;
-import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.oauth.OAuth2TokenProvider;
 import com.fsck.k9.mail.ssl.TrustedSocketFactory;
 import com.fsck.k9.mail.store.RemoteStore;
@@ -70,7 +70,7 @@ public class ImapStore extends RemoteStore {
         return ImapStoreUriDecoder.decode(uri);
     }
 
-    public static String createUri(ServerSettings server) {
+    public static String createUri(TraditionalServerSettings server) {
         return ImapStoreUriCreator.create(server);
     }
 

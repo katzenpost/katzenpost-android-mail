@@ -12,8 +12,8 @@ import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.K9LibRobolectricTestRunner;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.ServerSettings.Type;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.store.StoreConfig;
 
@@ -86,7 +86,8 @@ public class WebDavStoreTest {
 
     @Test
     public void createUri_withSetting_shouldProvideUri() {
-        ServerSettings serverSettings = new ServerSettings(Type.WebDAV, "example.org", 123456, ConnectionSecurity.NONE,
+        TraditionalServerSettings
+                serverSettings = new TraditionalServerSettings(Type.WebDAV, "example.org", 123456, ConnectionSecurity.NONE,
                 AuthType.PLAIN, "user", "password", null);
 
         String result = WebDavStore.createUri(serverSettings);
@@ -96,7 +97,7 @@ public class WebDavStoreTest {
 
     @Test
     public void createUri_withSettingsWithTLS_shouldProvideSSLUri() {
-        ServerSettings serverSettings = new ServerSettings(Type.WebDAV, "example.org", 123456,
+        TraditionalServerSettings serverSettings = new TraditionalServerSettings(Type.WebDAV, "example.org", 123456,
                 ConnectionSecurity.SSL_TLS_REQUIRED, AuthType.PLAIN, "user", "password", null);
 
         String result = WebDavStore.createUri(serverSettings);

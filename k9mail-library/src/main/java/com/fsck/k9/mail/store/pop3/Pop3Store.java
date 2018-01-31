@@ -78,7 +78,7 @@ public class Pop3Store extends RemoteStore {
      * e.g.
      * <pre>pop3://PLAIN:admin:pass123@example.org:12345</pre>
      */
-    public static ServerSettings decodeUri(String uri) {
+    public static TraditionalServerSettings decodeUri(String uri) {
         String host;
         int port;
         ConnectionSecurity connectionSecurity;
@@ -147,7 +147,7 @@ public class Pop3Store extends RemoteStore {
             }
         }
 
-        return new ServerSettings(ServerSettings.Type.POP3, host, port, connectionSecurity, authType, username,
+        return new TraditionalServerSettings(TraditionalServerSettings.Type.POP3, host, port, connectionSecurity, authType, username,
                 password, clientCertificateAlias);
     }
 
@@ -155,14 +155,14 @@ public class Pop3Store extends RemoteStore {
      * Creates a Pop3Store URI with the supplied settings.
      *
      * @param server
-     *         The {@link ServerSettings} object that holds the server settings.
+     *         The {@link TraditionalServerSettings} object that holds the server settings.
      *
      * @return A Pop3Store URI that holds the same information as the {@code server} parameter.
      *
      * @see StoreConfig#getStoreUri()
      * @see Pop3Store#decodeUri(String)
      */
-    public static String createUri(ServerSettings server) {
+    public static String createUri(TraditionalServerSettings server) {
         String userEnc = encodeUtf8(server.username);
         String passwordEnc = (server.password != null) ?
                     encodeUtf8(server.password) : "";
@@ -221,7 +221,7 @@ public class Pop3Store extends RemoteStore {
     public Pop3Store(StoreConfig storeConfig, TrustedSocketFactory socketFactory) throws MessagingException {
         super(storeConfig, socketFactory);
 
-        ServerSettings settings;
+        TraditionalServerSettings settings;
         try {
             settings = decodeUri(storeConfig.getStoreUri());
         } catch (IllegalArgumentException e) {

@@ -6,7 +6,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import com.fsck.k9.mail.AuthType;
-import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 
 import static com.fsck.k9.mail.helper.UrlEncodingHelper.encodeUtf8;
 
@@ -16,14 +16,14 @@ class ImapStoreUriCreator {
      * Creates an ImapStore URI with the supplied settings.
      *
      * @param server
-     *         The {@link ServerSettings} object that holds the server settings.
+     *         The {@link TraditionalServerSettings} object that holds the server settings.
      *
      * @return An ImapStore URI that holds the same information as the {@code server} parameter.
      *
      * @see com.fsck.k9.mail.store.StoreConfig#getStoreUri()
      * @see ImapStore#decodeUri(String)
      */
-    public static String create(ServerSettings server) {
+    public static String create(TraditionalServerSettings server) {
         String userEnc = encodeUtf8(server.username);
         String passwordEnc = (server.password != null) ? encodeUtf8(server.password) : "";
         String clientCertificateAliasEnc = (server.clientCertificateAlias != null) ?

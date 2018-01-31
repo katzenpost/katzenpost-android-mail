@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
-import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 
 
 /**
@@ -14,7 +14,7 @@ import com.fsck.k9.mail.ServerSettings;
  *
  * @see ImapStore#decodeUri(String)
  */
-public class ImapStoreSettings extends ServerSettings {
+public class ImapStoreSettings extends TraditionalServerSettings {
     public static final String AUTODETECT_NAMESPACE_KEY = "autoDetectNamespace";
     public static final String PATH_PREFIX_KEY = "pathPrefix";
 
@@ -45,7 +45,7 @@ public class ImapStoreSettings extends ServerSettings {
     }
 
     @Override
-    public ServerSettings newPassword(String newPassword) {
+    public TraditionalServerSettings newPassword(String newPassword) {
         return new ImapStoreSettings(host, port, connectionSecurity, authenticationType,
                 username, newPassword, clientCertificateAlias, autoDetectNamespace, pathPrefix);
     }

@@ -10,13 +10,13 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.DummyFolder;
 import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.Message.RecipientType;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mail.store.StoreConfig;
 import katzenpost.Client;
@@ -35,32 +35,27 @@ import katzenpost.Message;
  */
 @SuppressWarnings("deprecation")
 public class KatzenpostStore extends RemoteStore {
-    public static final String FOLDER_INBOX = "inbox";
-    private final File cacheDir;
+    private static final String PKI_ADDRESS = "37.218.242.147:29485";
+    private static final String PKI_PINNED_PUBLIC_KEY =
+            "DFD5E1A26E9B3EF7B3DA0102002B93C66FC36B12D14C608C3FBFCA03BF3EBCDC";
 
     private static Client client;
 
-    public static KatzenpostStoreSettings decodeUri(String uri) {
-        return new KatzenpostStoreSettings("37.218.242.147", 29485, null, null, "bob@ramix", null);
+    private final File cacheDir;
+    private final KatzenpostServerSettings settings;
+
+    public static KatzenpostServerSettings decodeUri(String uri) {
+        return KatzenpostUriParser.INSTANCE.decode(uri);
     }
 
-    public static String createUri(ServerSettings server) {
-        return "katzenpost:" + server.username + "@" + server.host;
+    public static String createUri(KatzenpostServerSettings server) {
+        return "katzenpost:" + server.linkkey + ":" + server.username + "@" + server.provider;
     }
-
-    private String username;
 
     public KatzenpostStore(StoreConfig storeConfig, Context context) throws MessagingException {
         super(storeConfig, null);
 
-        KatzenpostStoreSettings settings;
-        try {
-            settings = KatzenpostStore.decodeUri(storeConfig.getStoreUri());
-        } catch (IllegalArgumentException e) {
-            throw new MessagingException("Error while decoding store URI", e);
-        }
-
-        username = settings.username;
+        settings = KatzenpostStore.decodeUri(storeConfig.getStoreUri());
         cacheDir = new File(context.getCacheDir(), "katzencache");
     }
 
@@ -124,21 +119,7 @@ public class KatzenpostStore extends RemoteStore {
     private Client getClientAndConnectIfNecessary() throws MessagingException {
         if (client == null) {
             try {
-                Key key = Katzenpost.stringToKey("97f906cc6acd1ab84d3e66cfa6c1526febaa5d0cc73342def908dd2197aad6f4");
-
-                LogConfig logConfig = new LogConfig();
-                logConfig.setLevel("DEBUG");
-                logConfig.setEnabled(true);
-
-                Config config = new Config();
-                config.setPkiAddress("37.218.242.147:29485");
-                config.setPkiKey("DFD5E1A26E9B3EF7B3DA0102002B93C66FC36B12D14C608C3FBFCA03BF3EBCDC");
-                config.setUser("eve");
-                config.setProvider("ramix");
-                config.setLinkKey(key);
-                config.setDataDir(cacheDir.getAbsolutePath());
-                config.setLog(logConfig);
-
+                Config config = createConfig();
                 client = Katzenpost.new_(config);
                 client.waitToConnect();
             } catch (Exception e) {
@@ -147,6 +128,33 @@ public class KatzenpostStore extends RemoteStore {
         }
 
         return client;
+    }
+
+    @NonNull
+    private Config createConfig() throws Exception {
+        Config config = prepareConfig();
+
+        Key key = Katzenpost.stringToKey(settings.linkkey);
+
+        config.setProvider(settings.provider);
+        config.setUser(settings.username);
+        config.setLinkKey(key);
+
+        return config;
+    }
+
+    @NonNull
+    private Config prepareConfig() {
+        LogConfig logConfig = new LogConfig();
+        logConfig.setLevel("DEBUG");
+        logConfig.setEnabled(true);
+
+        Config config = new Config();
+        config.setPkiAddress(PKI_ADDRESS);
+        config.setPkiKey(PKI_PINNED_PUBLIC_KEY);
+        config.setDataDir(cacheDir.getAbsolutePath());
+        config.setLog(logConfig);
+        return config;
     }
 
     public String getMessage(long timeout) throws MessagingException {

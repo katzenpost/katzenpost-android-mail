@@ -15,10 +15,13 @@ import com.fsck.k9.mail.store.webdav.WebDavStore;
  *
  * @see WebDavStore#decodeUri(String)
  */
-public class KatzenpostStoreSettings extends ServerSettings {
-    protected KatzenpostStoreSettings(String host, int port, ConnectionSecurity connectionSecurity,
-                                  AuthType authenticationType, String username, String password) {
-        super(Type.KATZENPOST, host, port, connectionSecurity, authenticationType, username,
-                password, null);
+public class KatzenpostServerSettings extends ServerSettings {
+    public final String provider;
+    public final String linkkey;
+
+    protected KatzenpostServerSettings(String provider, String username, String linkkey) {
+        super(Type.KATZENPOST, username);
+        this.provider = provider;
+        this.linkkey = linkkey;
     }
 }

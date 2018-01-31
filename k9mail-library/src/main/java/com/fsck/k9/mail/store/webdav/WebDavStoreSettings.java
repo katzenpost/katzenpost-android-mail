@@ -2,7 +2,7 @@ package com.fsck.k9.mail.store.webdav;
 
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
-import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  *
  * @see WebDavStore#decodeUri(String)
  */
-public class WebDavStoreSettings extends ServerSettings {
+public class WebDavStoreSettings extends TraditionalServerSettings {
     public static final String ALIAS_KEY = "alias";
     public static final String PATH_KEY = "path";
     public static final String AUTH_PATH_KEY = "authPath";
@@ -47,7 +47,7 @@ public class WebDavStoreSettings extends ServerSettings {
     }
 
     @Override
-    public ServerSettings newPassword(String newPassword) {
+    public TraditionalServerSettings newPassword(String newPassword) {
         return new WebDavStoreSettings(host, port, connectionSecurity, authenticationType,
                 username, newPassword, clientCertificateAlias, alias, path, authPath, mailboxPath);
     }

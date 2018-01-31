@@ -8,42 +8,48 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 import com.fsck.k9.mail.ServerSettings.Type;
+import com.fsck.k9.mail.store.katzenpost.KatzenpostServerSettings;
+import com.fsck.k9.mail.store.katzenpost.KatzenpostStore;
 import com.fsck.k9.mail.store.webdav.WebDavStore;
 
 
 public class TransportUris {
     /**
-     * Decodes the contents of transport-specific URIs and puts them into a {@link ServerSettings}
+     * Decodes the contents of transport-specific URIs and puts them into a {@link TraditionalServerSettings}
      * object.
      *
      * @param uri
      *         the transport-specific URI to decode
      *
-     * @return A {@link ServerSettings} object holding the settings contained in the URI.
+     * @return A {@link TraditionalServerSettings} object holding the settings contained in the URI.
      */
     public static ServerSettings decodeTransportUri(String uri) {
         if (uri.startsWith("smtp")) {
             return decodeSmtpUri(uri);
         } else if (uri.startsWith("webdav")) {
             return decodeWebDavUri(uri);
+        } else if (uri.startsWith("katzenpost")) {
+            return decodeKatzenpostUri(uri);
         } else {
             throw new IllegalArgumentException("Not a valid transport URI");
         }
     }
 
     /**
-     * Creates a transport URI from the information supplied in the {@link ServerSettings} object.
+     * Creates a transport URI from the information supplied in the {@link TraditionalServerSettings} object.
      *
      * @param server
-     *         The {@link ServerSettings} object that holds the server settings.
+     *         The {@link TraditionalServerSettings} object that holds the server settings.
      *
      * @return A transport URI that holds the same information as the {@code server} parameter.
      */
     public static String createTransportUri(ServerSettings server) {
         if (Type.SMTP == server.type) {
-            return createSmtpUri(server);
+            return createSmtpUri(((TraditionalServerSettings) server));
         } else if (Type.WebDAV == server.type) {
-            return createWebDavUri(server);
+            return createWebDavUri(((TraditionalServerSettings) server));
+        } else if (Type.KATZENPOST == server.type) {
+            return createKatzenpostUri(((KatzenpostServerSettings) server));
         } else {
             throw new IllegalArgumentException("Not a valid transport URI");
         }
@@ -62,7 +68,7 @@ public class TransportUris {
      * smtp+ssl+://user:password:auth@server:port ConnectionSecurity.SSL_TLS_REQUIRED
      * </pre>
      */
-    private static ServerSettings decodeSmtpUri(String uri) {
+    private static TraditionalServerSettings decodeSmtpUri(String uri) {
         String host;
         int port;
         ConnectionSecurity connectionSecurity;
@@ -93,13 +99,13 @@ public class TransportUris {
          */
         if (scheme.equals("smtp")) {
             connectionSecurity = ConnectionSecurity.NONE;
-            port = ServerSettings.Type.SMTP.defaultPort;
+            port = TraditionalServerSettings.Type.SMTP.defaultPort;
         } else if (scheme.startsWith("smtp+tls")) {
             connectionSecurity = ConnectionSecurity.STARTTLS_REQUIRED;
-            port = ServerSettings.Type.SMTP.defaultPort;
+            port = TraditionalServerSettings.Type.SMTP.defaultPort;
         } else if (scheme.startsWith("smtp+ssl")) {
             connectionSecurity = ConnectionSecurity.SSL_TLS_REQUIRED;
-            port = ServerSettings.Type.SMTP.defaultTlsPort;
+            port = TraditionalServerSettings.Type.SMTP.defaultTlsPort;
         } else {
             throw new IllegalArgumentException("Unsupported protocol (" + scheme + ")");
         }
@@ -131,7 +137,7 @@ public class TransportUris {
             }
         }
 
-        return new ServerSettings(ServerSettings.Type.SMTP, host, port, connectionSecurity,
+        return new TraditionalServerSettings(TraditionalServerSettings.Type.SMTP, host, port, connectionSecurity,
                 authType, username, password, clientCertificateAlias);
     }
 
@@ -139,13 +145,13 @@ public class TransportUris {
      * Creates a SmtpTransport URI with the supplied settings.
      *
      * @param server
-     *         The {@link ServerSettings} object that holds the server settings.
+     *         The {@link TraditionalServerSettings} object that holds the server settings.
      *
      * @return A SmtpTransport URI that holds the same information as the {@code server} parameter.
      *
      * @see com.fsck.k9.mail.store.StoreConfig#getTransportUri()
      */
-    private static String createSmtpUri(ServerSettings server) {
+    private static String createSmtpUri(TraditionalServerSettings server) {
         String userEnc = (server.username != null) ?
                 encodeUtf8(server.username) : "";
         String passwordEnc = (server.password != null) ?
@@ -195,8 +201,16 @@ public class TransportUris {
      * {@link WebDavStore}. So the transport URI is the same as the store URI.
      * </p>
      */
-    private static ServerSettings decodeWebDavUri(String uri) {
+    private static TraditionalServerSettings decodeWebDavUri(String uri) {
         return WebDavStore.decodeUri(uri);
+    }
+
+    private static KatzenpostServerSettings decodeKatzenpostUri(String uri) {
+        return KatzenpostStore.decodeUri(uri);
+    }
+
+    private static String createKatzenpostUri(KatzenpostServerSettings server) {
+        return KatzenpostStore.createUri(server);
     }
 
     /**
@@ -207,7 +221,7 @@ public class TransportUris {
      * {@link WebDavStore}. So the transport URI is the same as the store URI.
      * </p>
      */
-    private static String createWebDavUri(ServerSettings server) {
+    private static String createWebDavUri(TraditionalServerSettings server) {
         return WebDavStore.createUri(server);
     }
 

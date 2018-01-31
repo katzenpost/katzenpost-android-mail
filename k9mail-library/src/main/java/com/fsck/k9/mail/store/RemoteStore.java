@@ -11,10 +11,12 @@ import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.ServerSettings.Type;
 import com.fsck.k9.mail.Store;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.oauth.OAuth2TokenProvider;
 import com.fsck.k9.mail.ssl.DefaultTrustedSocketFactory;
 import com.fsck.k9.mail.ssl.TrustedSocketFactory;
 import com.fsck.k9.mail.store.imap.ImapStore;
+import com.fsck.k9.mail.store.katzenpost.KatzenpostServerSettings;
 import com.fsck.k9.mail.store.pop3.Pop3Store;
 import com.fsck.k9.mail.store.katzenpost.KatzenpostStore;
 import com.fsck.k9.mail.store.webdav.WebDavHttpClient;
@@ -93,13 +95,13 @@ public abstract class RemoteStore extends Store {
     }
 
     /**
-     * Decodes the contents of store-specific URIs and puts them into a {@link com.fsck.k9.mail.ServerSettings}
+     * Decodes the contents of store-specific URIs and puts them into a {@link TraditionalServerSettings}
      * object.
      *
      * @param uri
      *         the store-specific URI to decode
      *
-     * @return A {@link com.fsck.k9.mail.ServerSettings} object holding the settings contained in the URI.
+     * @return A {@link TraditionalServerSettings} object holding the settings contained in the URI.
      *
      * @see com.fsck.k9.mail.store.imap.ImapStore#decodeUri(String)
      * @see com.fsck.k9.mail.store.pop3.Pop3Store#decodeUri(String)
@@ -120,10 +122,10 @@ public abstract class RemoteStore extends Store {
     }
 
     /**
-     * Creates a store URI from the information supplied in the {@link com.fsck.k9.mail.ServerSettings} object.
+     * Creates a store URI from the information supplied in the {@link TraditionalServerSettings} object.
      *
      * @param server
-     *         The {@link com.fsck.k9.mail.ServerSettings} object that holds the server settings.
+     *         The {@link TraditionalServerSettings} object that holds the server settings.
      *
      * @return A store URI that holds the same information as the {@code server} parameter.
      *
@@ -133,13 +135,13 @@ public abstract class RemoteStore extends Store {
      */
     public static String createStoreUri(ServerSettings server) {
         if (Type.IMAP == server.type) {
-            return ImapStore.createUri(server);
+            return ImapStore.createUri((TraditionalServerSettings) server);
         } else if (Type.POP3 == server.type) {
-            return Pop3Store.createUri(server);
+            return Pop3Store.createUri((TraditionalServerSettings) server);
         } else if (Type.WebDAV == server.type) {
-            return WebDavStore.createUri(server);
+            return WebDavStore.createUri((TraditionalServerSettings) server);
         } else if (Type.KATZENPOST == server.type) {
-            return KatzenpostStore.createUri(server);
+            return KatzenpostStore.createUri((KatzenpostServerSettings) server);
         } else {
             throw new IllegalArgumentException("Not a valid store URI");
         }

@@ -17,6 +17,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
 import android.text.TextUtils;
 
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.TransportUris;
 import timber.log.Timber;
 
@@ -26,7 +27,6 @@ import com.fsck.k9.K9;
 import com.fsck.k9.Preferences;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
-import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.preferences.Settings.InvalidSettingValueException;
@@ -346,7 +346,7 @@ public class SettingsImporter {
         }
 
         // Write incoming server settings (storeUri)
-        ServerSettings incoming = new ImportedServerSettings(account.incoming);
+        TraditionalServerSettings incoming = new ImportedServerSettings(account.incoming);
         String storeUri = RemoteStore.createStoreUri(incoming);
         putString(editor, accountKeyPrefix + Account.STORE_URI_KEY, Base64.encode(storeUri));
 
@@ -355,14 +355,14 @@ public class SettingsImporter {
         boolean createAccountDisabled = AuthType.EXTERNAL != incoming.authenticationType &&
                 (incoming.password == null || incoming.password.isEmpty());
 
-        if (account.outgoing == null && !ServerSettings.Type.WebDAV.name().equals(account.incoming.type)) {
+        if (account.outgoing == null && !TraditionalServerSettings.Type.WebDAV.name().equals(account.incoming.type)) {
             // All account types except WebDAV need to provide outgoing server settings
             throw new InvalidSettingValueException();
         }
 
         if (account.outgoing != null) {
             // Write outgoing server settings (transportUri)
-            ServerSettings outgoing = new ImportedServerSettings(account.outgoing);
+            TraditionalServerSettings outgoing = new ImportedServerSettings(account.outgoing);
             String transportUri = TransportUris.createTransportUri(outgoing);
             putString(editor, accountKeyPrefix + Account.TRANSPORT_URI_KEY, Base64.encode(transportUri));
 
@@ -372,7 +372,7 @@ public class SettingsImporter {
              * identical for this account type. Nor is a password required if the AuthType is EXTERNAL.
              */
             boolean outgoingPasswordNeeded = AuthType.EXTERNAL != outgoing.authenticationType &&
-                    !(ServerSettings.Type.WebDAV == outgoing.type) &&
+                    !(TraditionalServerSettings.Type.WebDAV == outgoing.type) &&
                     outgoing.username != null &&
                     !outgoing.username.isEmpty() &&
                     (outgoing.password == null || outgoing.password.isEmpty());
@@ -1025,11 +1025,11 @@ public class SettingsImporter {
         return name;
     }
 
-    private static class ImportedServerSettings extends ServerSettings {
+    private static class ImportedServerSettings extends TraditionalServerSettings {
         private final ImportedServer importedServer;
 
         public ImportedServerSettings(ImportedServer server) {
-            super(ServerSettings.Type.valueOf(server.type), server.host, convertPort(server.port),
+            super(TraditionalServerSettings.Type.valueOf(server.type), server.host, convertPort(server.port),
                     convertConnectionSecurity(server.connectionSecurity),
                     server.authenticationType, server.username, server.password,
                     server.clientCertificateAlias);

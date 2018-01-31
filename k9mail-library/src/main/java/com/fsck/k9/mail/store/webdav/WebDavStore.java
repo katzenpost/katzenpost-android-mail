@@ -22,7 +22,7 @@ import com.fsck.k9.mail.Folder;
 import com.fsck.k9.mail.K9MailLib;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.filter.Base64;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mail.store.StoreConfig;
@@ -65,7 +65,7 @@ public class WebDavStore extends RemoteStore {
         return WebDavStoreUriDecoder.decode(uri);
     }
 
-    public static String createUri(ServerSettings server) {
+    public static String createUri(TraditionalServerSettings server) {
         return WebDavStoreUriCreator.create(server);
     }
 

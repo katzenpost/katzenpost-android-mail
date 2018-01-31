@@ -34,8 +34,8 @@ import com.fsck.k9.activity.setup.AccountSetupCheckSettings.CheckDirection;
 import com.fsck.k9.helper.Utility;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
-import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.ServerSettings.Type;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.TransportUris;
 import com.fsck.k9.view.ClientCertificateSpinner;
 import com.fsck.k9.view.ClientCertificateSpinner.OnClientCertificateChangedListener;
@@ -145,7 +145,7 @@ public class AccountSetupOutgoing extends K9Activity implements OnClickListener,
         }
 
         try {
-            ServerSettings settings = TransportUris.decodeTransportUri(mAccount.getTransportUri());
+            TraditionalServerSettings settings = (TraditionalServerSettings) TransportUris.decodeTransportUri(mAccount.getTransportUri());
 
             updateAuthPlainTextFromSecurityType(settings.connectionSecurity);
 
@@ -476,7 +476,8 @@ public class AccountSetupOutgoing extends K9Activity implements OnClickListener,
 
         String newHost = mServerView.getText().toString();
         int newPort = Integer.parseInt(mPortView.getText().toString());
-        ServerSettings server = new ServerSettings(Type.SMTP, newHost, newPort, securityType, authType, username, password, clientCertificateAlias);
+        TraditionalServerSettings
+                server = new TraditionalServerSettings(Type.SMTP, newHost, newPort, securityType, authType, username, password, clientCertificateAlias);
         uri = TransportUris.createTransportUri(server);
         mAccount.deleteCertificate(newHost, newPort, CheckDirection.OUTGOING);
         mAccount.setTransportUri(uri);

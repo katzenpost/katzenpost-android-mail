@@ -77,8 +77,8 @@ import com.fsck.k9.activity.setup.KatzenpostWelcomeActivity;
 import com.fsck.k9.activity.setup.Prefs;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.helper.SizeFormatter;
-import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.TransportUris;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mailstore.StorageManager;
@@ -779,16 +779,8 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
              * this account type. Also don't ask when the username is missing.
              * Also don't ask when the AuthType is EXTERNAL.
              */
-            boolean configureOutgoingServer = AuthType.EXTERNAL != outgoing.authenticationType
-                    && !(ServerSettings.Type.WebDAV == outgoing.type)
-                    && outgoing.username != null
-                    && !outgoing.username.isEmpty()
-                    && (outgoing.password == null || outgoing.password
-                            .isEmpty());
-
-            boolean configureIncomingServer = AuthType.EXTERNAL != incoming.authenticationType
-                    && (incoming.password == null || incoming.password
-                            .isEmpty());
+            boolean configureOutgoingServer = outgoing.isUnconfiguredOutgoing();
+            boolean configureIncomingServer = incoming.isUnconfiguredIncoming();
 
             // Create a ScrollView that will be used as container for the whole layout
             final ScrollView scrollView = new ScrollView(activity);
@@ -846,7 +838,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 TextView incomingText = (TextView) layout.findViewById(
                                             R.id.password_prompt_incoming_server);
                 incomingText.setText(activity.getString(R.string.settings_import_incoming_server,
-                                                        incoming.host));
+                        ((TraditionalServerSettings) incoming).host));
 
                 mIncomingPasswordView = (EditText) layout.findViewById(R.id.incoming_server_password);
                 mIncomingPasswordView.addTextChangedListener(this);
@@ -859,7 +851,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                 TextView outgoingText = (TextView) layout.findViewById(
                                             R.id.password_prompt_outgoing_server);
                 outgoingText.setText(activity.getString(R.string.settings_import_outgoing_server,
-                                                        outgoing.host));
+                        ((TraditionalServerSettings) outgoing).host));
 
                 mOutgoingPasswordView = (EditText) layout.findViewById(
                                             R.id.outgoing_server_password);
@@ -989,7 +981,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                     // Set incoming server password
                     String storeUri = mAccount.getStoreUri();
                     ServerSettings incoming = RemoteStore.decodeStoreUri(storeUri);
-                    ServerSettings newIncoming = incoming.newPassword(mIncomingPassword);
+                    ServerSettings newIncoming = ((TraditionalServerSettings) incoming).newPassword(mIncomingPassword);
                     String newStoreUri = RemoteStore.createStoreUri(newIncoming);
                     mAccount.setStoreUri(newStoreUri);
                 }
@@ -998,7 +990,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
                     // Set outgoing server password
                     String transportUri = mAccount.getTransportUri();
                     ServerSettings outgoing = TransportUris.decodeTransportUri(transportUri);
-                    ServerSettings newOutgoing = outgoing.newPassword(mOutgoingPassword);
+                    ServerSettings newOutgoing = ((TraditionalServerSettings) outgoing).newPassword(mOutgoingPassword);
                     String newTransportUri = TransportUris.createTransportUri(newOutgoing);
                     mAccount.setTransportUri(newTransportUri);
                 }

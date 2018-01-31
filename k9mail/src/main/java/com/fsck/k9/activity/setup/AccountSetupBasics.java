@@ -38,6 +38,7 @@ import com.fsck.k9.helper.Utility;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.TransportUris;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.view.ClientCertificateSpinner;
@@ -405,9 +406,11 @@ public class AccountSetupBasics extends K9Activity
 
         // set default uris
         // NOTE: they will be changed again in AccountSetupAccountType!
-        ServerSettings storeServer = new ServerSettings(ServerSettings.Type.IMAP, "mail." + domain, -1,
+        TraditionalServerSettings
+                storeServer = new TraditionalServerSettings(TraditionalServerSettings.Type.IMAP, "mail." + domain, -1,
                 ConnectionSecurity.SSL_TLS_REQUIRED, authenticationType, email, password, clientCertificateAlias);
-        ServerSettings transportServer = new ServerSettings(ServerSettings.Type.SMTP, "mail." + domain, -1,
+        TraditionalServerSettings
+                transportServer = new TraditionalServerSettings(TraditionalServerSettings.Type.SMTP, "mail." + domain, -1,
                 ConnectionSecurity.SSL_TLS_REQUIRED, authenticationType, email, password, clientCertificateAlias);
         String storeUri = RemoteStore.createStoreUri(storeServer);
         String transportUri = TransportUris.createTransportUri(transportServer);

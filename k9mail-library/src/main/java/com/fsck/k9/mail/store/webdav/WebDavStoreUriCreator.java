@@ -1,6 +1,6 @@
 package com.fsck.k9.mail.store.webdav;
 
-import com.fsck.k9.mail.ServerSettings;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.store.StoreConfig;
 
 import java.net.URI;
@@ -14,12 +14,12 @@ public class WebDavStoreUriCreator {
     /**
      * Creates a WebDavStore URI with the supplied settings.
      *
-     * @param server The {@link ServerSettings} object that holds the server settings.
+     * @param server The {@link TraditionalServerSettings} object that holds the server settings.
      * @return A WebDavStore URI that holds the same information as the {@code server} parameter.
      * @see StoreConfig#getStoreUri()
      * @see WebDavStore#decodeUri(String)
      */
-    public static String create(ServerSettings server) {
+    public static String create(TraditionalServerSettings server) {
         String userEnc = encodeUtf8(server.username);
         String passwordEnc = (server.password != null) ?
                 encodeUtf8(server.password) : "";

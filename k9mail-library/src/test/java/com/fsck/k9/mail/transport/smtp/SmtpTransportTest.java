@@ -11,8 +11,8 @@ import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.K9LibRobolectricTestRunner;
 import com.fsck.k9.mail.Message;
 import com.fsck.k9.mail.MessagingException;
-import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.ServerSettings.Type;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.TransportUris;
 import com.fsck.k9.mail.XOAuth2ChallengeParserTest;
 import com.fsck.k9.mail.filter.Base64;
@@ -947,7 +947,7 @@ public class SmtpTransportTest {
 
         String host = server.getHost();
         int port = server.getPort();
-        ServerSettings serverSettings = new ServerSettings(
+        TraditionalServerSettings serverSettings = new TraditionalServerSettings(
                 Type.SMTP,
                 host,
                 port,

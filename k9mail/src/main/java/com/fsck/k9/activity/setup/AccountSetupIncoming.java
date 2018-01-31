@@ -38,9 +38,9 @@ import com.fsck.k9.helper.Utility;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ConnectionSecurity;
 import com.fsck.k9.mail.NetworkType;
-import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mail.ServerSettings.Type;
 import com.fsck.k9.mail.Store;
+import com.fsck.k9.mail.TraditionalServerSettings;
 import com.fsck.k9.mail.TransportUris;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mail.store.imap.ImapStoreSettings;
@@ -166,7 +166,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
         boolean editSettings = Intent.ACTION_EDIT.equals(getIntent().getAction());
 
         try {
-            ServerSettings settings = RemoteStore.decodeStoreUri(mAccount.getStoreUri());
+            TraditionalServerSettings settings = (TraditionalServerSettings) RemoteStore.decodeStoreUri(mAccount.getStoreUri());
 
             if (savedInstanceState == null) {
                 // The first item is selected if settings.authenticationType is null or is not in mAuthTypeAdapter
@@ -529,7 +529,8 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
                     }
 
                     URI oldUri = new URI(mAccount.getTransportUri());
-                    ServerSettings transportServer = new ServerSettings(Type.SMTP, oldUri.getHost(), oldUri.getPort(),
+                    TraditionalServerSettings
+                            transportServer = new TraditionalServerSettings(Type.SMTP, oldUri.getHost(), oldUri.getPort(),
                             ConnectionSecurity.SSL_TLS_REQUIRED, authType, username, password, clientCertificateAlias);
                     String transportUri = TransportUris.createTransportUri(transportServer);
                     mAccount.setTransportUri(transportUri);
@@ -582,7 +583,7 @@ public class AccountSetupIncoming extends K9Activity implements OnClickListener 
             }
 
             mAccount.deleteCertificate(host, port, CheckDirection.INCOMING);
-            ServerSettings settings = new ServerSettings(mStoreType, host, port,
+            TraditionalServerSettings settings = new TraditionalServerSettings(mStoreType, host, port,
                     connectionSecurity, authType, username, password, clientCertificateAlias, extra);
 
             mAccount.setStoreUri(RemoteStore.createStoreUri(settings));
