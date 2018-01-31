@@ -73,8 +73,8 @@ import com.fsck.k9.activity.misc.ExtendedAsyncTask;
 import com.fsck.k9.activity.misc.NonConfigurationInstance;
 import com.fsck.k9.activity.setup.AccountSettings;
 import com.fsck.k9.activity.setup.AccountSetupBasics;
+import com.fsck.k9.activity.setup.KatzenpostWelcomeActivity;
 import com.fsck.k9.activity.setup.Prefs;
-import com.fsck.k9.activity.setup.WelcomeMessage;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.helper.SizeFormatter;
 import com.fsck.k9.mail.AuthType;
@@ -394,7 +394,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         if (ACTION_IMPORT_SETTINGS.equals(intent.getAction())) {
             onImport();
         } else if (accounts.size() < 1) {
-            WelcomeMessage.showWelcomeMessage(this);
+            KatzenpostWelcomeActivity.Companion.showWelcomeActivity(this);
             finish();
             return;
         }

@@ -290,6 +290,8 @@
         <activity
             android:name=".activity.UpgradeDatabases"
             android:label="@string/upgrade_databases_title"/>
+        <activity android:name=".activity.setup.KatzenpostWelcomeActivity" />
+        <activity android:name=".activity.setup.KatzenpostSetupActivity" />
 
         <receiver
             android:name=".service.BootReceiver"
