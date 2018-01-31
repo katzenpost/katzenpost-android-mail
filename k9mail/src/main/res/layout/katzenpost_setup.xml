@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="Get a username"
+                android:text="Reserve a username"
                 style="?android:textAppearanceMedium"
                 />
 
@@ -152,7 +152,6 @@
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
                     android:padding="6dp"
-                    android:src="?iconActionRefresh"
                     />
 
             </LinearLayout>
@@ -181,6 +180,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
+                    android:background="?android:attr/selectableItemBackground"
                     android:id="@+id/button_name_refresh"
                     android:padding="4dp"
                     android:src="?iconActionRefresh"
@@ -222,22 +222,44 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="You're done!"
+                android:text="Finish registration"
                 style="?android:textAppearanceMedium"
                 />
 
         </LinearLayout>
 
-        <Button
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="horizontal"
             android:layout_gravity="right"
-            android:id="@+id/button_finish"
-            android:background="?android:attr/selectableItemBackground"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-            android:text="Finish"
-            style="@style/Widget.AppCompat.Button.Borderless"
-            />
+            >
+
+            <ProgressBar
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:padding="6dp"
+                android:id="@+id/progress_register"
+                android:visibility="gone"
+                tools:visibility="visible"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="8dp"
+                android:padding="4dp"
+                android:id="@+id/button_register"
+                android:background="?android:attr/selectableItemBackground"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                android:text="Register this name"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 

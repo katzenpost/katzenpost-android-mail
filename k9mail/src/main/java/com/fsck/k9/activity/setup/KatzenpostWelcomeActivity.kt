@@ -12,7 +12,6 @@ import android.view.Window
 import com.fsck.k9.R
 import com.fsck.k9.activity.K9Activity
 import com.fsck.k9.bindView
-import java.util.ArrayList
 
 
 class KatzenpostWelcomeActivity : K9Activity() {
