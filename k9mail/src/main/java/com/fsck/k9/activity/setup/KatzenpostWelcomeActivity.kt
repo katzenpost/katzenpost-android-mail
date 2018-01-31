@@ -1,6 +1,7 @@
 package com.fsck.k9.activity.setup
 
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -17,8 +18,6 @@ import com.fsck.k9.bindView
 class KatzenpostWelcomeActivity : K9Activity() {
     private val getStartedButton: View by bindView(R.id.button_next)
     private val logo: View by bindView(R.id.logo)
-
-    private var shouldFinish = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         window.requestFeature(Window.FEATURE_ACTION_BAR)
@@ -42,7 +41,13 @@ class KatzenpostWelcomeActivity : K9Activity() {
                     Pair.create(findViewById(android.R.id.navigationBarBackground), Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME),
                     Pair.create(logo, "logo")
             )
-            startActivity(setupActivityIntent, sceneTransitionAnimation.toBundle())
+            startActivityForResult(setupActivityIntent, 0, sceneTransitionAnimation.toBundle())
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == Activity.RESULT_OK) {
+            finish();
         }
     }
 

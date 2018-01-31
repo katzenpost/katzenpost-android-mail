@@ -19,9 +19,13 @@ public class KatzenpostServerSettings extends ServerSettings {
     public final String provider;
     public final String linkkey;
 
-    protected KatzenpostServerSettings(String provider, String username, String linkkey) {
+    public KatzenpostServerSettings(String provider, String username, String linkkey) {
         super(Type.KATZENPOST, username);
         this.provider = provider;
         this.linkkey = linkkey;
+    }
+
+    public String getAddress() {
+        return username + "@" + provider;
     }
 }

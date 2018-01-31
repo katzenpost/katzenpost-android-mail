@@ -1,17 +1,22 @@
 package com.fsck.k9.activity.setup
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Bundle
+import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.widget.*
-import com.fsck.k9.R
+import com.fsck.k9.*
+import com.fsck.k9.account.AccountCreator
 import com.fsck.k9.activity.K9Activity
-import com.fsck.k9.bindView
+import com.fsck.k9.mail.store.RemoteStore
+import com.fsck.k9.mail.store.katzenpost.KatzenpostServerSettings
+import com.fsck.k9.mail.store.katzenpost.KatzenpostStore
 import com.fsck.k9.view.ToolableViewAnimator
 import com.transitionseverywhere.Fade
 import com.transitionseverywhere.Transition
@@ -168,16 +173,51 @@ class KatzenpostSetupActivity : K9Activity() {
     private fun onClickFinish() {
         displayStateRegisterLoading()
 
-        object : AsyncTask<Void,Void,Boolean>() {
+        object : AsyncTask<Void,Void,KatzenpostServerSettings>() {
             override fun doInBackground(vararg params: Void?) = signupInteractor.finishSignup(reservationToken!!)
-            override fun onPostExecute(result: Boolean) {
-                state = State.REGISTER_DONE
-                progressRegister.visibility = View.GONE
-
-                Toast.makeText(this@KatzenpostSetupActivity, "xxx", Toast.LENGTH_LONG).show()
-                super.onPostExecute(result)
-            }
+            override fun onPostExecute(result: KatzenpostServerSettings) = onRegisterComplete(result)
         }.execute()
+    }
+
+    private fun onRegisterComplete(serverSettings: KatzenpostServerSettings) {
+        state = State.REGISTER_DONE
+        progressRegister.visibility = View.GONE
+
+        saveAccount(serverSettings)
+
+        Handler().postDelayed({
+            getWindow().setSharedElementReturnTransition(null);
+            getWindow().setSharedElementReenterTransition(null);
+
+            setResult(Activity.RESULT_OK)
+            finish()
+        }, 1000)
+    }
+
+    private fun saveAccount(serverSettings: KatzenpostServerSettings) {
+        val preferences = Preferences.getPreferences(this)
+        val account = preferences.newAccount()
+        account.setName(serverSettings.username)
+        account.setEmail(serverSettings.address)
+
+        val storeUri = KatzenpostStore.createUri(serverSettings)
+        account.setStoreUri(storeUri)
+        account.setTransportUri(storeUri)
+
+        setupFolderNames(account)
+        account.setDeletePolicy(Account.DeletePolicy.ON_DELETE)
+
+        account.save(preferences)
+
+        K9.setServicesEnabled(this)
+    }
+
+    private fun setupFolderNames(account: Account) {
+        account.setDraftsFolderName(getString(R.string.special_mailbox_name_drafts))
+        account.setTrashFolderName(getString(R.string.special_mailbox_name_trash))
+        account.setSentFolderName(getString(R.string.special_mailbox_name_sent))
+        account.setArchiveFolderName(getString(R.string.special_mailbox_name_archive))
+        account.setSpamFolderName(getString(R.string.special_mailbox_name_spam))
     }
 
     override fun onBackPressed() {
