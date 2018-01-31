@@ -1,6 +1,8 @@
 package com.fsck.k9.activity.setup
 
 class KatzenpostSignupInteractor {
+    fun getProviderNames(): List<String> = listOf("pano", "ramix", "idefix")
+
     fun reserveName(providerName: String): NameReservationToken {
         Thread.sleep(1500)
 

@@ -37,6 +37,19 @@
         android:text="Katzenpost is a federated communication network, that uses mixnets to give you strong anonymity guarantees."
         />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:textStyle="bold"
+        android:textColor="#f00"
+        android:text="This software is currently in beta, do not rely on it!"
+        />
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
