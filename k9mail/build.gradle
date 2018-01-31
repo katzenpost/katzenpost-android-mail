@@ -39,6 +39,9 @@ dependencies {
     compile 'com.squareup.moshi:moshi:1.2.0'
     compile "com.jakewharton.timber:timber:${timberVersion}"
     compile 'net.jcip:jcip-annotations:1.0'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:${kotlinVersion}"
+
+    compile "com.andkulikov:transitionseverywhere:1.7.8"
 
     androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 
@@ -59,7 +62,7 @@ android {
         versionCode 1
         versionName '1.0'
 
-        minSdkVersion 15
+        minSdkVersion 21
         targetSdkVersion 22
 
         generatedDensities = ['mdpi', 'hdpi', 'xhdpi']
