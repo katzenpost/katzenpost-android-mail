@@ -8,6 +8,7 @@ import java.util.Set;
 import android.content.Context;
 
 import com.fsck.k9.Account;
+import com.fsck.k9.KatzenpostService;
 import com.fsck.k9.controller.MessagingController;
 import com.fsck.k9.controller.MessagingListener;
 import com.fsck.k9.controller.RemoteMessageStore;
@@ -69,14 +70,14 @@ public class KatzenpostMessageStore implements RemoteMessageStore {
         localFolder.setLastChecked(System.currentTimeMillis());
         localFolder.setStatus(null);
 
-        KatzenpostStore remoteStore = (KatzenpostStore) account.getRemoteStore();
+        KatzenpostService.Companion.startService(context, account.getUuid());
 
         int newMessages = 0;
         while (true) {
             Timber.d("Checking for Katzenpost message...");
-            String rawMessage = remoteStore.getMessage(3L);
+            String rawMessage = KatzenpostService.Companion.pollMessage();
             if (rawMessage == null) {
-                Timber.d("Timeout!");
+                Timber.d("No message!");
                 break;
             }
 

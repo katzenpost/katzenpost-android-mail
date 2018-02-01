@@ -414,6 +414,9 @@
             android:name=".service.DatabaseUpgradeService"
             android:exported="false"/>
 
+        <service android:name=".KatzenpostService"
+            android:exported="false" />
+
         <provider
             android:name=".provider.AttachmentProvider"
             android:authorities="${applicationId}.attachmentprovider"

@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 
 import com.fsck.k9.mail.Address;
 import com.fsck.k9.mail.DummyFolder;
@@ -20,11 +19,6 @@ import com.fsck.k9.mail.MessagingException;
 import com.fsck.k9.mail.store.RemoteStore;
 import com.fsck.k9.mail.store.StoreConfig;
 import katzenpost.Client;
-import katzenpost.Config;
-import katzenpost.Katzenpost;
-import katzenpost.Key;
-import katzenpost.LogConfig;
-import katzenpost.Message;
 
 
 /**
@@ -114,62 +108,5 @@ public class KatzenpostStore extends RemoteStore {
         } catch (Exception e) {
             throw new MessagingException("Error encoding message for transport!", e);
         }
-    }
-
-    private Client getClientAndConnectIfNecessary() throws MessagingException {
-        if (client == null) {
-            try {
-                Config config = createConfig();
-                client = Katzenpost.new_(config);
-                client.waitToConnect();
-            } catch (Exception e) {
-                throw new MessagingException("Error setting up Katzenpost client", e);
-            }
-        }
-
-        return client;
-    }
-
-    @NonNull
-    private Config createConfig() throws Exception {
-        Config config = prepareConfig();
-
-        Key key = Katzenpost.stringToKey(settings.linkkey);
-
-        config.setProvider(settings.provider);
-        config.setUser(settings.username);
-        config.setLinkKey(key);
-
-        return config;
-    }
-
-    @NonNull
-    private Config prepareConfig() {
-        LogConfig logConfig = new LogConfig();
-        logConfig.setLevel("DEBUG");
-        logConfig.setEnabled(true);
-
-        Config config = new Config();
-        config.setPkiAddress(PKI_ADDRESS);
-        config.setPkiKey(PKI_PINNED_PUBLIC_KEY);
-        config.setDataDir(cacheDir.getAbsolutePath());
-        config.setLog(logConfig);
-        return config;
-    }
-
-    public String getMessage(long timeout) throws MessagingException {
-        Client client = getClientAndConnectIfNecessary();
-
-        try {
-            Message message = client.getMessage(timeout);
-            if (message == null) {
-                return null;
-            }
-
-            return message.getPayload();
-        } catch (Exception e) {
-            throw new MessagingException("Error fetching Katzenpost message", e);
-        }
-
     }
 }
