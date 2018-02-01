@@ -1,18 +1,17 @@
 package com.fsck.k9.mail.store.katzenpost
 
-import android.net.Uri
-
 
 internal object KatzenpostUriParser {
-    fun decode(uriString: String): KatzenpostServerSettings {
-        val uri = Uri.parse(uriString)
-
-        if (uri.scheme != "katzenpost") {
+    fun decode(uri: String): KatzenpostServerSettings {
+        val (scheme, content) = uri.split(":", limit = 2)
+        if (scheme != "katzenpost") {
             throw IllegalArgumentException("invalid uri!")
         }
 
-        val (username, linkkey) = uri.userInfo.split(":")
+        val (userinfo, provider) = content.split("@")
+        val (keys, username) = userinfo.split(":")
+        val (linkkey, idkey) = keys.split("/")
 
-        return KatzenpostServerSettings(uri.host, username, linkkey)
+        return KatzenpostServerSettings(provider, username, linkkey, idkey)
     }
 }

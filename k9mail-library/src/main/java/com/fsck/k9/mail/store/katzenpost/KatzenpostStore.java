@@ -49,7 +49,7 @@ public class KatzenpostStore extends RemoteStore {
     }
 
     public static String createUri(KatzenpostServerSettings server) {
-        return "katzenpost:" + server.linkkey + ":" + server.username + "@" + server.provider;
+        return "katzenpost:" + server.linkkey + "/" + server.idkey + ":" + server.username + "@" + server.provider;
     }
 
     public KatzenpostStore(StoreConfig storeConfig, Context context) throws MessagingException {
