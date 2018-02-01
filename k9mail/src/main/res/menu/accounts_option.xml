@@ -3,16 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/search"
-        android:icon="?attr/iconActionSearch"
+        android:id="@+id/add_new_account"
+        android:icon="?attr/iconActionAdd"
         app:showAsAction="always"
-        android:title="@string/search_action"/>
-    <item
-        android:id="@+id/check_mail"
-        android:alphabeticShortcut="r"
-        android:icon="?attr/iconActionRefresh"
-        app:showAsAction="always"
-        android:title="@string/check_mail_action"/>
+        android:title="@string/add_account_action"/>
     <item
         android:id="@+id/compose"
         android:alphabeticShortcut="c"
@@ -20,10 +14,16 @@
         app:showAsAction="always"
         android:title="@string/compose_action"/>
     <item
-        android:id="@+id/add_new_account"
-        android:icon="?attr/iconActionAdd"
-        app:showAsAction="ifRoom"
-        android:title="@string/add_account_action"/>
+        android:id="@+id/check_mail"
+        android:alphabeticShortcut="r"
+        android:icon="?attr/iconActionRefresh"
+        android:visible="false"
+        android:title="@string/check_mail_action"/>
+    <item
+        android:id="@+id/search"
+        android:visible="false"
+        android:icon="?attr/iconActionSearch"
+        android:title="@string/search_action"/>
     <item
         android:id="@+id/about"
         android:icon="?attr/iconActionAbout"
@@ -31,6 +31,7 @@
     <item
         android:id="@+id/import_export"
         android:icon="?attr/iconActionImportExport"
+        android:visible="false"
         android:title="@string/import_export_action">
         <menu>
             <item

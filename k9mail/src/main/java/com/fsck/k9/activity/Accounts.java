@@ -409,9 +409,9 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             onOpenAccount(unifiedInboxAccount);
             finish();
             return;
-        } else if (startup && accounts.size() == 1 && onOpenAccount(accounts.get(0))) {
-            finish();
-            return;
+//        } else if (startup && accounts.size() == 1 && onOpenAccount(accounts.get(0))) {
+//            finish();
+//            return;
         }
 
         requestWindowFeature(Window.FEATURE_PROGRESS);
