@@ -40,6 +40,8 @@ dependencies {
     compile "com.jakewharton.timber:timber:${timberVersion}"
     compile 'net.jcip:jcip-annotations:1.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:${kotlinVersion}"
+    compile 'com.squareup.okhttp3:okhttp:3.9.1'
+    compile 'com.nispok:snackbar:2.11.0'
 
     compile "com.andkulikov:transitionseverywhere:1.7.8"
 

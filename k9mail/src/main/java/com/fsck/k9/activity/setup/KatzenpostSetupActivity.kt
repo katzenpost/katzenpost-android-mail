@@ -10,17 +10,21 @@ import android.os.Handler
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.TextView
 import com.fsck.k9.*
-import com.fsck.k9.account.AccountCreator
 import com.fsck.k9.activity.K9Activity
-import com.fsck.k9.mail.store.RemoteStore
 import com.fsck.k9.mail.store.katzenpost.KatzenpostServerSettings
 import com.fsck.k9.mail.store.katzenpost.KatzenpostStore
 import com.fsck.k9.view.ToolableViewAnimator
+import com.nispok.snackbar.Snackbar
+import com.nispok.snackbar.SnackbarManager
 import com.transitionseverywhere.Fade
 import com.transitionseverywhere.Transition
 import com.transitionseverywhere.TransitionManager
+import timber.log.Timber
 
 
 @SuppressLint("StaticFieldLeak")
@@ -152,10 +156,34 @@ class KatzenpostSetupActivity : K9Activity() {
     private fun loadName() {
         displayStateReserveLoading()
 
-        object : AsyncTask<Void,Void, NameReservationToken>() {
-            override fun doInBackground(vararg params: Void?) = signupInteractor.reserveName(providerName!!)
-            override fun onPostExecute(reservationToken: NameReservationToken) = onLoadNameFinished(reservationToken)
+        object : AsyncTaskEx<Void,Void,NameReservationToken,RegistrationException>() {
+            override fun doInBackgroundEx(vararg params: Void?): NameReservationToken {
+                return signupInteractor.requestNameReservation(providerName!!)
+            }
+            override fun onPostExecuteEx(exception: RegistrationException) {
+                onLoadNameFailed(exception)
+            }
+            override fun onPostExecuteEx(reservationToken: NameReservationToken) {
+                onLoadNameFinished(reservationToken)
+            }
         }.execute()
+    }
+
+    private fun onLoadNameFailed(exception: RegistrationException) {
+        Timber.e(exception, "Error reserving Katzenpost name!")
+        if (state != State.RESERVE_LOADING) {
+            return
+        }
+
+        val snackbar = Snackbar.with(applicationContext)
+        snackbar.text(exception.message)
+        SnackbarManager.show(snackbar, this)
+
+        this.reservationToken = null
+
+        nameText.text = "Error"
+        nameLayout.displayedChild = 1
+        nameRefreshButton.isEnabled = true
     }
 
     private fun onLoadNameFinished(reservationToken: NameReservationToken) {
@@ -174,7 +202,7 @@ class KatzenpostSetupActivity : K9Activity() {
         displayStateRegisterLoading()
 
         object : AsyncTask<Void,Void,KatzenpostServerSettings>() {
-            override fun doInBackground(vararg params: Void?) = signupInteractor.finishSignup(reservationToken!!)
+            override fun doInBackground(vararg params: Void?) = signupInteractor.requestCreateAccount(reservationToken!!)
             override fun onPostExecute(result: KatzenpostServerSettings) = onRegisterComplete(result)
         }.execute()
     }
@@ -186,8 +214,8 @@ class KatzenpostSetupActivity : K9Activity() {
         saveAccount(serverSettings)
 
         Handler().postDelayed({
-            getWindow().setSharedElementReturnTransition(null);
-            getWindow().setSharedElementReenterTransition(null);
+            window.sharedElementReturnTransition = null
+            window.sharedElementReenterTransition = null
 
             setResult(Activity.RESULT_OK)
             finish()

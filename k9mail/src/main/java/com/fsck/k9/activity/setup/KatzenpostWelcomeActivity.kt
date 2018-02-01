@@ -11,6 +11,7 @@ import android.transition.Fade
 import android.view.View
 import android.view.Window
 import com.fsck.k9.R
+import com.fsck.k9.activity.Accounts
 import com.fsck.k9.activity.K9Activity
 import com.fsck.k9.bindView
 
@@ -47,6 +48,7 @@ class KatzenpostWelcomeActivity : K9Activity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
+            Accounts.listAccounts(this)
             finish();
         }
     }

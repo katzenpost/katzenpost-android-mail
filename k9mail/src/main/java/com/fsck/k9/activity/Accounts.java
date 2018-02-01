@@ -610,7 +610,7 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
     }
 
     private void onAddNewAccount() {
-        AccountSetupBasics.actionNewAccount(this);
+        KatzenpostWelcomeActivity.Companion.showWelcomeActivity(this);
     }
 
     private void onEditPrefs() {
