@@ -38,6 +38,14 @@ buildscript {
     }
 }
 
+allprojects {
+    repositories {
+        flatDir {
+            dirs "${rootProject.projectDir}/bindings"
+        }
+    }
+}
+
 project.ext {
     testCoverage = project.hasProperty('testCoverage')
 }
