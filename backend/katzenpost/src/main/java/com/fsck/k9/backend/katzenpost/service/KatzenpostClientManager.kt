@@ -117,7 +117,9 @@ class KatzenpostClientManager(val context: Context) {
         val katzenCacheDir = File(context.filesDir, "katzencache")
         katzenCacheDir.mkdir()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Files.setPosixFilePermissions(katzenCacheDir.toPath(), setOf(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_WRITE))
+            val permissions0700 = setOf(
+                    PosixFilePermission.OWNER_WRITE, PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_EXECUTE)
+            Files.setPosixFilePermissions(katzenCacheDir.toPath(), permissions0700)
         }
 
         val config = Config()
@@ -154,11 +156,18 @@ private class KatzenpostMessagePollThread(
         client.waitToConnect()
 
         while (!Thread.interrupted()) {
-            val msg = client.getMessage(2500)
-            if (msg != null) {
-                onReceiveCallback(msg.sender, msg.payload)
+            try {
+                val msg = client.getMessage(10 * 60 * 1000)
+                if (msg != null) {
+                    onReceiveCallback(msg.sender, msg.payload)
+                }
+                // just make sure we don't super-hotloop
+                Thread.sleep(1000)
+            } catch (e: InterruptedException) {
+                // nvm
             }
-            Thread.sleep(2500)
         }
+
+        client.shutdown()
     }
 }
