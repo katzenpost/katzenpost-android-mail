@@ -1,10 +1,7 @@
 package com.fsck.k9.backend.katzenpost
 
 import android.content.Context
-import com.fsck.k9.backend.api.Backend
-import com.fsck.k9.backend.api.BackendStorage
-import com.fsck.k9.backend.api.SyncConfig
-import com.fsck.k9.backend.api.SyncListener
+import com.fsck.k9.backend.api.*
 import com.fsck.k9.backend.katzenpost.service.KatzenpostClientManager
 import com.fsck.k9.backend.katzenpost.service.KatzenpostService
 import com.fsck.k9.mail.*
@@ -57,74 +54,52 @@ class KatzenpostBackend(
             newMessageCount += 1
         }
 
+        backendFolder.setLastChecked(System.currentTimeMillis())
+        backendFolder.setMoreMessages(BackendFolder.MoreMessages.FALSE)
+
         listener.syncFinished(folder, backendFolder.getMessageCount(), newMessageCount)
     }
 
-    override fun downloadMessage(syncConfig: SyncConfig, folderServerId: String, messageServerId: String) {
-        throw UnsupportedOperationException("not implemented")
-    }
+    override fun downloadMessage(syncConfig: SyncConfig, folderServerId: String, messageServerId: String) =
+            throw UnsupportedOperationException("not implemented")
 
     override fun setFlag(folderServerId: String, messageServerIds: List<String>, flag: Flag, newState: Boolean) {
         // throw UnsupportedOperationException("not supported")
     }
 
-    override fun markAllAsRead(folderServerId: String) {
-        throw UnsupportedOperationException("not supported")
-    }
+    override fun markAllAsRead(folderServerId: String) = throw UnsupportedOperationException("not supported")
 
-    override fun expunge(folderServerId: String) {
-        throw UnsupportedOperationException("not supported")
-    }
+    override fun expunge(folderServerId: String) = throw UnsupportedOperationException("not supported")
 
-    override fun expungeMessages(folderServerId: String, messageServerIds: List<String>) {
-        throw UnsupportedOperationException("not supported")
-    }
+    override fun expungeMessages(folderServerId: String, messageServerIds: List<String>) =
+            throw UnsupportedOperationException("not supported")
 
-    override fun deleteAllMessages(folderServerId: String) {
-        throw UnsupportedOperationException("not supported")
-    }
+    override fun deleteAllMessages(folderServerId: String) = throw UnsupportedOperationException("not supported")
 
     override fun moveMessages(
-            sourceFolderServerId: String,
-            targetFolderServerId: String,
-            messageServerIds: List<String>
-    ): Map<String, String>? {
-        throw UnsupportedOperationException("not supported")
-    }
+            sourceFolderServerId: String, targetFolderServerId: String, messageServerIds: List<String>
+    ): Map<String, String>? = throw UnsupportedOperationException("not supported")
 
     override fun copyMessages(
-            sourceFolderServerId: String,
-            targetFolderServerId: String,
-            messageServerIds: List<String>
-    ): Map<String, String>? {
-        throw UnsupportedOperationException("not supported")
-    }
+            sourceFolderServerId: String, targetFolderServerId: String, messageServerIds: List<String>
+    ): Map<String, String>? = throw UnsupportedOperationException("not supported")
 
     override fun search(
-            folderServerId: String,
-            query: String?,
-            requiredFlags: Set<Flag>?,
-            forbiddenFlags: Set<Flag>?
-    ): List<String> {
-        throw UnsupportedOperationException("not supported")
-    }
+            folderServerId: String, query: String?, requiredFlags: Set<Flag>?, forbiddenFlags: Set<Flag>?
+    ): List<String> = throw UnsupportedOperationException("not supported")
 
     override fun fetchMessage(folderServerId: String, messageServerId: String, fetchProfile: FetchProfile): Message {
         throw UnsupportedOperationException("not supported")
         // return commandFetchMessage.fetchMessage(folderServerId, messageServerId, fetchProfile)
     }
 
-    override fun fetchPart(folderServerId: String, messageServerId: String, part: Part, bodyFactory: BodyFactory) {
+    override fun fetchPart(folderServerId: String, messageServerId: String, part: Part, bodyFactory: BodyFactory) =
         throw UnsupportedOperationException("not supported")
-    }
 
-    override fun findByMessageId(folderServerId: String, messageId: String): String? {
-        return null
-    }
+    override fun findByMessageId(folderServerId: String, messageId: String): String? = null
 
-    override fun uploadMessage(folderServerId: String, message: Message): String? {
-        throw UnsupportedOperationException("not supported")
-    }
+    override fun uploadMessage(folderServerId: String, message: Message): String? =
+            throw UnsupportedOperationException("not supported")
 
     override fun createPusher(receiver: PushReceiver): Pusher {
         return object : Pusher {
