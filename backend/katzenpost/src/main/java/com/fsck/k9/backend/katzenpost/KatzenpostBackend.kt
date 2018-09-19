@@ -1,17 +1,21 @@
 package com.fsck.k9.backend.katzenpost
 
+import android.content.Context
 import com.fsck.k9.backend.api.Backend
 import com.fsck.k9.backend.api.BackendStorage
 import com.fsck.k9.backend.api.SyncConfig
 import com.fsck.k9.backend.api.SyncListener
+import com.fsck.k9.backend.katzenpost.service.KatzenpostService
 import com.fsck.k9.mail.*
 
 class KatzenpostBackend(
-        accountName: String,
+        private val context: Context,
+        private val accountUuid: String,
         backendStorage: BackendStorage,
-        private val katzenpostStore: KatzenpostStore
+        private val katzenpostServerSettings: KatzenpostServerSettings
 ) : Backend {
-    private val katzenpostSync: KatzenpostSync = KatzenpostSync(accountName, backendStorage, katzenpostStore)
+    // private val katzenpostSync: KatzenpostSync = KatzenpostSync(accountUuid, backendStorage, katzenpostStore)
+    private val commandRefreshFolderList = CommandRefreshFolderList(backendStorage)
 
     override val supportsSeenFlag = false
     override val supportsExpunge = false
@@ -20,14 +24,15 @@ class KatzenpostBackend(
     override val supportsUpload = false
     override val supportsTrashFolder = false
     override val supportsSearchByDate = false
-    override val isPushCapable = false
+    override val isPushCapable = true
 
     override fun refreshFolderList() {
-        throw UnsupportedOperationException("not implemented")
+        commandRefreshFolderList.refreshFolderList()
     }
 
     override fun sync(folder: String, syncConfig: SyncConfig, listener: SyncListener, providedRemoteFolder: Folder<*>?) {
-        katzenpostSync.sync(folder, syncConfig, listener)
+        KatzenpostService.ensureService(context, katzenpostServerSettings)
+        // katzenpostSync.sync(folder, syncConfig, listener)
     }
 
     override fun downloadMessage(syncConfig: SyncConfig, folderServerId: String, messageServerId: String) {
@@ -97,18 +102,40 @@ class KatzenpostBackend(
     }
 
     override fun createPusher(receiver: PushReceiver): Pusher {
-        throw UnsupportedOperationException("not supported")
+        return object : Pusher {
+            var lastRefreshValue: Long = 0
+
+            override fun start(folderServerIds: MutableList<String>?) {
+                KatzenpostService.ensureService(context, katzenpostServerSettings)
+            }
+
+            override fun refresh() {
+                KatzenpostService.ensureService(context, katzenpostServerSettings)
+            }
+
+            override fun stop() {
+                KatzenpostService.stopService(context)
+            }
+
+            override fun getRefreshInterval() = 60
+
+            override fun setLastRefresh(lastRefresh: Long) {
+                lastRefreshValue = lastRefresh
+            }
+
+            override fun getLastRefresh() = lastRefreshValue
+        }
     }
 
     override fun checkIncomingServerSettings() {
         // check connection
     }
 
-    override fun sendMessage(message: Message) {
-        katzenpostStore.sendMessages(listOf(message))
-    }
-
     override fun checkOutgoingServerSettings() {
         // check connection
+    }
+
+    override fun sendMessage(message: Message) {
+        KatzenpostService.sendMessage(context, katzenpostServerSettings, message)
     }
 }

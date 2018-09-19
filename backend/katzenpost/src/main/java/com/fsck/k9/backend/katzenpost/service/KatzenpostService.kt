@@ -4,6 +4,7 @@ import android.app.Notification
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import com.fsck.k9.backend.katzenpost.KatzenpostServerSettings
@@ -19,23 +20,25 @@ import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.attribute.PosixFilePermission
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 
-class KatzenpostService(private val settings: KatzenpostServerSettings) : Service() {
+class KatzenpostService : Service() {
     private var clientThread: ClientThread? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Timber.d("KatzenpostService Intent: %s", intent)
         when (intent?.action) {
-            "start" -> startClientThread(intent.getStringExtra("account"))
+            "start" -> startClientThread(serverSettings.getValue(intent.getStringExtra("address")))
             "stop" -> stopClientThread()
         }
 
         return START_STICKY
     }
 
-    private fun startClientThread(accountUuid: String) {
+    private fun startClientThread(settings: KatzenpostServerSettings) {
         if (clientThread != null) {
             return
         }
@@ -76,11 +79,10 @@ class KatzenpostService(private val settings: KatzenpostServerSettings) : Servic
     private fun createConfig(settings: KatzenpostServerSettings): Config {
         val config = prepareConfig()
 
-        val key = Katzenpost.stringToKey(settings.linkkey)
-
         config.provider = settings.provider
-        config.user = settings.username
-        config.linkKey = key
+        config.user = settings.name
+        config.linkKey = Katzenpost.stringToKey(settings.linkkey)
+        config.identityKey = Katzenpost.stringToKey(settings.idkey)
 
         return config
     }
@@ -91,6 +93,10 @@ class KatzenpostService(private val settings: KatzenpostServerSettings) : Servic
         logConfig.enabled = true
 
         val katzenCacheDir = File(cacheDir, "katzencache")
+        katzenCacheDir.mkdir()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Files.setPosixFilePermissions(katzenCacheDir.toPath(), setOf(PosixFilePermission.OWNER_READ, PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_WRITE))
+        }
 
         val config = Config()
         config.pkiAddress = PKI_ADDRESS
@@ -113,6 +119,9 @@ class KatzenpostService(private val settings: KatzenpostServerSettings) : Servic
                     receiveQueue.offer(msg.payload)
                     triggerPolling()
                 }
+                for (outgoingMsg in sendQueue) {
+                    client.send(outgoingMsg.recipient, outgoingMsg.message)
+                }
                 Thread.sleep(2500)
             }
 
@@ -127,14 +136,15 @@ class KatzenpostService(private val settings: KatzenpostServerSettings) : Servic
     companion object {
         private val receiveQueue = ConcurrentLinkedQueue<String>()
         private val sendQueue = ConcurrentLinkedQueue<OutgoingMsg>()
+        private val serverSettings = mutableMapOf<String,KatzenpostServerSettings>()
 
-        private const val PKI_ADDRESS = "37.218.242.147:29485"
-        private const val PKI_PINNED_PUBLIC_KEY = "DFD5E1A26E9B3EF7B3DA0102002B93C66FC36B12D14C608C3FBFCA03BF3EBCDC"
+        private const val PKI_ADDRESS = "95.179.156.72:29483"
+        private const val PKI_PINNED_PUBLIC_KEY = "o4w1Nyj/nKNwho5SWfAIfh7SMU8FRx52nMHGgYsMHqQ="
 
         fun pollMessage(): String? = receiveQueue.poll()
 
         @Throws(MessagingException::class)
-        fun sendMessage(context: Context, accountUuid: String, message: com.fsck.k9.mail.Message) {
+        fun sendMessage(context: Context, katzenpostServerSettings: KatzenpostServerSettings, message: com.fsck.k9.mail.Message) {
             val baos = ByteArrayOutputStream()
             try {
                 message.writeTo(baos)
@@ -156,14 +166,20 @@ class KatzenpostService(private val settings: KatzenpostServerSettings) : Servic
                 sendQueue.offer(OutgoingMsg(address.address, String(msgBytes)))
             }
 
-            refreshService(context, accountUuid)
+            ensureService(context, katzenpostServerSettings)
         }
 
-        fun refreshService(context: Context, accountUuid: String) {
+        fun ensureService(context: Context, katzenpostServerSettings: KatzenpostServerSettings) {
+            serverSettings.put(katzenpostServerSettings.address, katzenpostServerSettings)
+
             val intent = Intent(context, KatzenpostService::class.java)
             intent.action = "start"
-            intent.putExtra("account", accountUuid)
-            context.startService(intent)
+            intent.putExtra("address", katzenpostServerSettings.address)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
         }
 
         fun stopService(context: Context) {

@@ -149,6 +149,20 @@
             android:label="@string/account_setup_names_title"/>
 
         <activity
+            android:name=".activity.setup.KatzenpostWelcomeActivity"
+            android:configChanges="locale"
+            />
+
+        <activity
+            android:name=".activity.setup.KatzenpostSetupActivity"
+            android:configChanges="locale"
+            />
+
+        <service
+            android:name=".backend.katzenpost.service.KatzenpostService"
+            android:enabled="true"/>
+
+        <activity
             android:name=".activity.ChooseAccount"
             android:configChanges="locale"
             android:label="@string/choose_account_title"

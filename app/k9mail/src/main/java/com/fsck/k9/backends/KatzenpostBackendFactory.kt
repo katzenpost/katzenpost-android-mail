@@ -18,23 +18,22 @@ class KatzenpostBackendFactory(private val context: Context, private val prefere
         val accountName = account.displayName
         val settings = decodeStoreUri(account.getStoreUri())
         val backendStorage = K9BackendStorage(preferences, account, account.localStore)
-        val katzenpostStore = KatzenpostStore(settings, account, context)
 
-        return KatzenpostBackend(accountName, backendStorage, katzenpostStore)
+        return KatzenpostBackend(context, accountName, backendStorage, settings)
     }
 
     override fun decodeStoreUri(storeUri: String) = KatzenpostUriParser.decode(storeUri)
 
     override fun createStoreUri(serverSettings: ServerSettings): String {
         serverSettings as KatzenpostServerSettings
-        return "katzenpost:" + serverSettings.linkkey + ":" + serverSettings.idkey + ":" + serverSettings.username + "@" + serverSettings.provider
+        return "katzenpost:" + serverSettings.linkkey + ":" + serverSettings.idkey + ":" + serverSettings.name + "@" + serverSettings.provider
     }
 
     override fun decodeTransportUri(transportUri: String) = KatzenpostUriParser.decode(transportUri)
 
     override fun createTransportUri(serverSettings: ServerSettings): String {
         serverSettings as KatzenpostServerSettings
-        return "katzenpost:" + serverSettings.linkkey + ":" + serverSettings.idkey + ":" + serverSettings.username + "@" + serverSettings.provider
+        return "katzenpost:" + serverSettings.linkkey + ":" + serverSettings.idkey + ":" + serverSettings.name + "@" + serverSettings.provider
     }
 
     companion object {

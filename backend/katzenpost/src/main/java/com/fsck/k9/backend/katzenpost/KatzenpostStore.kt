@@ -10,7 +10,11 @@ import com.fsck.k9.mail.store.StoreConfig
 import java.io.File
 
 
-class KatzenpostStore(private val settings: KatzenpostServerSettings, storeConfig: StoreConfig, context: Context) : RemoteStore(storeConfig, null) {
+class KatzenpostStore(
+        private val settings: KatzenpostServerSettings,
+        storeConfig: StoreConfig,
+        context: Context
+) : RemoteStore(storeConfig, null) {
     private val cacheDir: File
 
     init {
@@ -23,11 +27,11 @@ class KatzenpostStore(private val settings: KatzenpostServerSettings, storeConfi
     }
 
     override fun getPersonalNamespaces(): MutableList<out Folder<Message>> {
-        return mutableListOf()
+        return FOLDERS.map(this::getFolder).toMutableList()
     }
 
-    override fun getFolder(name: String): Folder<*> {
-        return DummyFolder()
+    override fun getFolder(name: String): Folder<Message> {
+        return DummyFolder(name)
     }
 
     @Throws(MessagingException::class)
@@ -36,15 +40,13 @@ class KatzenpostStore(private val settings: KatzenpostServerSettings, storeConfi
             //            sendMessage(message);
         }
     }
+
+    companion object {
+        val FOLDERS = listOf("INBOX")
+    }
 }
 
-class KatzenpostServerSettings(val provider: String, username: String, val linkkey: String, idkey: String) : ServerSettings("katzenpost") {
-    val idkey: String
-
+class KatzenpostServerSettings(val provider: String, val name: String, val linkkey: String, val idkey: String) : ServerSettings("katzenpost") {
     val address: String
-        get() = "$username@$provider"
-
-    init {
-        this.idkey = linkkey
-    }
+        get() = "$name@$provider"
 }

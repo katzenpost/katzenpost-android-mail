@@ -66,19 +66,17 @@ import com.fsck.k9.DI;
 import com.fsck.k9.FontSizes;
 import com.fsck.k9.K9;
 import com.fsck.k9.Preferences;
-import com.fsck.k9.backend.BackendManager;
-import com.fsck.k9.preferences.Protocols;
-import com.fsck.k9.ui.R;
 import com.fsck.k9.activity.compose.MessageActions;
 import com.fsck.k9.activity.misc.ExtendedAsyncTask;
 import com.fsck.k9.activity.misc.NonConfigurationInstance;
 import com.fsck.k9.activity.setup.AccountSetupBasics;
-import com.fsck.k9.activity.setup.WelcomeMessage;
+import com.fsck.k9.activity.setup.KatzenpostWelcomeActivity;
+import com.fsck.k9.backend.BackendManager;
 import com.fsck.k9.controller.MessagingController;
-import com.fsck.k9.ui.helper.SizeFormatter;
 import com.fsck.k9.mail.AuthType;
 import com.fsck.k9.mail.ServerSettings;
 import com.fsck.k9.mailstore.StorageManager;
+import com.fsck.k9.preferences.Protocols;
 import com.fsck.k9.preferences.SettingsExporter;
 import com.fsck.k9.preferences.SettingsImportExportException;
 import com.fsck.k9.preferences.SettingsImporter;
@@ -90,6 +88,8 @@ import com.fsck.k9.search.LocalSearch;
 import com.fsck.k9.search.SearchAccount;
 import com.fsck.k9.search.SearchSpecification.Attribute;
 import com.fsck.k9.search.SearchSpecification.SearchField;
+import com.fsck.k9.ui.R;
+import com.fsck.k9.ui.helper.SizeFormatter;
 import com.fsck.k9.ui.settings.SettingsActivity;
 import com.fsck.k9.ui.settings.account.AccountSettingsActivity;
 import com.fsck.k9.view.ColorChip;
@@ -381,7 +381,8 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
         if (ACTION_IMPORT_SETTINGS.equals(intent.getAction())) {
             onImport();
         } else if (accounts.size() < 1) {
-            WelcomeMessage.showWelcomeMessage(this);
+            KatzenpostWelcomeActivity.Companion.showWelcomeActivity(this);
+            // WelcomeMessage.showWelcomeMessage(this);
             finish();
             return;
         }
