@@ -60,7 +60,9 @@ class KatzenpostClientManager(val context: Context) {
         message.setRecipients(Message.RecipientType.BCC, null)
 
         for (address in addresses) {
-
+            if (!clientState.client.hasKey(address.address)) {
+                clientState.client.getKey(address.address)
+            }
             clientState.client.send(address.address, String(msgBytes))
         }
     }
