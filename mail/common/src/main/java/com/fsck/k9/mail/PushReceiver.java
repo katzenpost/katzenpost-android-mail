@@ -3,11 +3,13 @@ package com.fsck.k9.mail;
 
 import java.util.List;
 
+import android.support.annotation.Nullable;
+
 import com.fsck.k9.mail.power.WakeLock;
 
 
 public interface PushReceiver {
-    void syncFolder(Folder folder);
+    void syncFolder(String folderServerId, @Nullable Folder folder);
     void messagesArrived(Folder folder, List<Message> mess);
     void messagesFlagsChanged(Folder folder, List<Message> mess);
     void messagesRemoved(Folder folder, List<Message> mess);

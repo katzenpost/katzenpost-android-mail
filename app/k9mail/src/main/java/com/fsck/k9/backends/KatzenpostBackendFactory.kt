@@ -7,11 +7,15 @@ import com.fsck.k9.backend.BackendFactory
 import com.fsck.k9.backend.api.Backend
 import com.fsck.k9.backend.katzenpost.KatzenpostBackend
 import com.fsck.k9.backend.katzenpost.KatzenpostServerSettings
-import com.fsck.k9.backend.katzenpost.KatzenpostStore
+import com.fsck.k9.backend.katzenpost.service.KatzenpostClientManager
 import com.fsck.k9.mail.ServerSettings
 import com.fsck.k9.mailstore.K9BackendStorage
 
-class KatzenpostBackendFactory(private val context: Context, private val preferences: Preferences) : BackendFactory {
+class KatzenpostBackendFactory(
+        private val context: Context,
+        private val preferences: Preferences,
+        private val katzenpostClientManager: KatzenpostClientManager
+) : BackendFactory {
     override val transportUriPrefix = "katzenpost"
 
     override fun createBackend(account: Account): Backend {
@@ -19,7 +23,7 @@ class KatzenpostBackendFactory(private val context: Context, private val prefere
         val settings = decodeStoreUri(account.getStoreUri())
         val backendStorage = K9BackendStorage(preferences, account, account.localStore)
 
-        return KatzenpostBackend(context, accountName, backendStorage, settings)
+        return KatzenpostBackend(context, accountName, backendStorage, settings, katzenpostClientManager)
     }
 
     override fun decodeStoreUri(storeUri: String) = KatzenpostUriParser.decode(storeUri)
@@ -34,11 +38,6 @@ class KatzenpostBackendFactory(private val context: Context, private val prefere
     override fun createTransportUri(serverSettings: ServerSettings): String {
         serverSettings as KatzenpostServerSettings
         return "katzenpost:" + serverSettings.linkkey + ":" + serverSettings.idkey + ":" + serverSettings.name + "@" + serverSettings.provider
-    }
-
-    companion object {
-        private val PKI_ADDRESS = "37.218.242.147:29485"
-        private val PKI_PINNED_PUBLIC_KEY = "DFD5E1A26E9B3EF7B3DA0102002B93C66FC36B12D14C608C3FBFCA03BF3EBCDC"
     }
 }
 

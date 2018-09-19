@@ -643,7 +643,7 @@ class ImapFolderPusher extends ImapFolder {
                 throw new MessagingException("Message count = -1 for idling");
             }
 
-            pushReceiver.syncFolder(ImapFolderPusher.this);
+            pushReceiver.syncFolder(getServerId(), ImapFolderPusher.this);
         }
 
         private void notifyMessagesArrived(long startUid, long uidNext) {

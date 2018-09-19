@@ -427,10 +427,10 @@ public class Accounts extends K9ListActivity implements OnItemClickListener {
             nonConfigurationInstance.restore(this);
         }
 
-        ChangeLog cl = new ChangeLog(this);
-        if (cl.isFirstRun()) {
-            cl.getLogDialog().show();
-        }
+//        ChangeLog cl = new ChangeLog(this);
+//        if (cl.isFirstRun()) {
+//            cl.getLogDialog().show();
+//        }
     }
 
     private void initializeActionBar() {

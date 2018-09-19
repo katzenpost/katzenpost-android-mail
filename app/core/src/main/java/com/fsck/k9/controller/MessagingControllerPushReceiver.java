@@ -30,20 +30,20 @@ public class MessagingControllerPushReceiver implements PushReceiver {
     }
 
     public void messagesFlagsChanged(Folder folder, List<Message> messages) {
-        syncFolder(folder);
+        syncFolder(folder.getServerId(), folder);
     }
     public void messagesArrived(Folder folder, List<Message> messages) {
-        syncFolder(folder);
+        syncFolder(folder.getServerId(), folder);
     }
     public void messagesRemoved(Folder folder, List<Message> messages) {
-        syncFolder(folder);
+        syncFolder(folder.getServerId(), folder);
     }
 
-    public void syncFolder(Folder folder) {
-        Timber.v("syncFolder(%s)", folder.getServerId());
+    public void syncFolder(String folderServerId, Folder folder) {
+        Timber.v("syncFolder(%s)", folderServerId);
 
         final CountDownLatch latch = new CountDownLatch(1);
-        controller.synchronizeMailbox(account, folder.getServerId(), new SimpleMessagingListener() {
+        controller.synchronizeMailbox(account, folderServerId, new SimpleMessagingListener() {
             @Override
             public void synchronizeMailboxFinished(Account account, String folderServerId,
             int totalMessagesInMailbox, int numNewMessages) {
@@ -57,11 +57,11 @@ public class MessagingControllerPushReceiver implements PushReceiver {
             }
         }, folder);
 
-        Timber.v("syncFolder(%s) about to await latch release", folder.getServerId());
+        Timber.v("syncFolder(%s) about to await latch release", folderServerId);
 
         try {
             latch.await();
-            Timber.v("syncFolder(%s) got latch release", folder.getServerId());
+            Timber.v("syncFolder(%s) got latch release", folderServerId);
         } catch (Exception e) {
             Timber.e(e, "Interrupted while awaiting latch release");
         }

@@ -9,7 +9,7 @@ internal class CommandRefreshFolderList(private val backendStorage: BackendStora
     fun refreshFolderList() {
         val folderServerIds = backendStorage.getFolderServerIds()
         if ("INBOX" !in folderServerIds) {
-            val inbox = FolderInfo("INBOX", "INBOX")
+            val inbox = FolderInfo("INBOX", "Inbox")
             backendStorage.createFolders(listOf(inbox))
         }
     }

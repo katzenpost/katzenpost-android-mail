@@ -24,6 +24,9 @@ import com.fsck.k9.backend.katzenpost.KatzenpostSignupInteractor
 import com.fsck.k9.backend.katzenpost.NameReservationToken
 import com.fsck.k9.backend.katzenpost.RegistrationException
 import com.fsck.k9.controller.MessagingController
+import com.fsck.k9.mail.Folder
+import com.fsck.k9.mail.MessagingException
+import com.fsck.k9.mailstore.LocalStore
 import com.fsck.k9.ui.R
 import kotlinx.android.synthetic.main.katzenpost_setup.*
 import kotlinx.coroutines.experimental.android.UI
@@ -261,12 +264,26 @@ class KatzenpostSetupActivity : K9Activity() {
     }
 
     private fun setupFolderNames(account: Account) {
-        account.inboxFolder = getString(R.string.special_mailbox_name_inbox)
-        account.draftsFolder = getString(R.string.special_mailbox_name_drafts)
-        account.trashFolder = getString(R.string.special_mailbox_name_trash)
-        account.sentFolder = getString(R.string.special_mailbox_name_sent)
-        account.archiveFolder = getString(R.string.special_mailbox_name_archive)
-        account.spamFolder = getString(R.string.special_mailbox_name_spam)
+        createLocalFolder(account.localStore, Account.OUTBOX, getString(R.string.special_mailbox_name_outbox))
+
+        account.draftsFolder = "Drafts"
+        account.trashFolder = "Trash"
+        account.sentFolder = "Sent"
+
+        createLocalFolder(account.localStore, account.draftsFolder, getString(R.string.special_mailbox_name_drafts))
+        createLocalFolder(account.localStore, account.sentFolder, getString(R.string.special_mailbox_name_sent))
+        createLocalFolder(account.localStore, account.trashFolder, getString(R.string.special_mailbox_name_trash))
+    }
+
+    @Throws(MessagingException::class)
+    private fun createLocalFolder(localStore: LocalStore, internalId: String, folderName: String) {
+        val folder = localStore.getFolder(internalId)
+        if (!folder.exists()) {
+            folder.create(Folder.FolderType.HOLDS_MESSAGES)
+        }
+        folder.name = folderName
+        folder.isInTopGroup = true
+        folder.syncClass = Folder.FolderClass.NONE
     }
 
     override fun onBackPressed() {

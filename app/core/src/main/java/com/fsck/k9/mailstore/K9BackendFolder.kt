@@ -100,6 +100,8 @@ class K9BackendFolder(
         }
     }
 
+    override fun getMessageCount() = localFolder.messageCount
+
     override fun setLastChecked(timestamp: Long) {
         database.setLong(column = "last_updated", value = timestamp)
     }

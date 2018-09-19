@@ -13,11 +13,13 @@ dependencies {
 
     api project(":backend:api")
 
+    api "org.koin:koin-android-architecture:${versions.koin}"
+
     implementation "com.android.support:appcompat-v7:${versions.supportLibrary}"
     implementation "com.jakewharton.timber:timber:${versions.timber}"
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
 
-    implementation 'katzenpost.2:katzenpost:dev@aar'
+    implementation 'katzenpost.4:katzenpost:dev@aar'
 
     testImplementation project(":mail:testing")
     testImplementation "junit:junit:${versions.junit}"

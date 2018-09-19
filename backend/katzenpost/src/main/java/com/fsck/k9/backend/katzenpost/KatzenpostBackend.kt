@@ -5,14 +5,18 @@ import com.fsck.k9.backend.api.Backend
 import com.fsck.k9.backend.api.BackendStorage
 import com.fsck.k9.backend.api.SyncConfig
 import com.fsck.k9.backend.api.SyncListener
+import com.fsck.k9.backend.katzenpost.service.KatzenpostClientManager
 import com.fsck.k9.backend.katzenpost.service.KatzenpostService
 import com.fsck.k9.mail.*
+import com.fsck.k9.mail.internet.MimeMessage
+import timber.log.Timber
 
 class KatzenpostBackend(
         private val context: Context,
         private val accountUuid: String,
-        backendStorage: BackendStorage,
-        private val katzenpostServerSettings: KatzenpostServerSettings
+        val backendStorage: BackendStorage,
+        private val katzenpostServerSettings: KatzenpostServerSettings,
+        private val katzenpostClientManager: KatzenpostClientManager
 ) : Backend {
     // private val katzenpostSync: KatzenpostSync = KatzenpostSync(accountUuid, backendStorage, katzenpostStore)
     private val commandRefreshFolderList = CommandRefreshFolderList(backendStorage)
@@ -31,8 +35,29 @@ class KatzenpostBackend(
     }
 
     override fun sync(folder: String, syncConfig: SyncConfig, listener: SyncListener, providedRemoteFolder: Folder<*>?) {
-        KatzenpostService.ensureService(context, katzenpostServerSettings)
-        // katzenpostSync.sync(folder, syncConfig, listener)
+        if (folder != "INBOX") return
+
+        Timber.i("Polling Katzenpost %s", katzenpostServerSettings.address)
+
+        val backendFolder by lazy { backendStorage.getFolder(folder) }
+        listener.syncStarted(folder, backendFolder.name)
+
+        // TODO
+        // KatzenpostService.ensureForegroundService(context)
+
+        var newMessageCount = 0
+        var msg: String?
+        while (true) {
+            msg = katzenpostClientManager.pollMessage(katzenpostServerSettings)
+            if (msg == null) break
+
+            val message = MimeMessage.parseMimeMessage(msg.byteInputStream(), true)
+            backendFolder.saveCompleteMessage(message)
+            listener.syncNewMessage(folder, message.uid, false)
+            newMessageCount += 1
+        }
+
+        listener.syncFinished(folder, backendFolder.getMessageCount(), newMessageCount)
     }
 
     override fun downloadMessage(syncConfig: SyncConfig, folderServerId: String, messageServerId: String) {
@@ -40,7 +65,7 @@ class KatzenpostBackend(
     }
 
     override fun setFlag(folderServerId: String, messageServerIds: List<String>, flag: Flag, newState: Boolean) {
-        throw UnsupportedOperationException("not supported")
+        // throw UnsupportedOperationException("not supported")
     }
 
     override fun markAllAsRead(folderServerId: String) {
@@ -106,24 +131,33 @@ class KatzenpostBackend(
             var lastRefreshValue: Long = 0
 
             override fun start(folderServerIds: MutableList<String>?) {
-                KatzenpostService.ensureService(context, katzenpostServerSettings)
+                lastRefreshValue = currentTimeMillis()
+
+                Timber.i("Starting Katzenpost client %s", katzenpostServerSettings.address)
+                katzenpostClientManager.registerKatzenpostClient(katzenpostServerSettings, receiver)
+
+                KatzenpostService.ensureForegroundService(context)
             }
 
             override fun refresh() {
-                KatzenpostService.ensureService(context, katzenpostServerSettings)
+                Timber.i("Refreshing Katzenpost client %s", katzenpostServerSettings.address)
+                KatzenpostService.ensureForegroundService(context)
             }
 
             override fun stop() {
+                Timber.i("Stopping Katzenpost client %s", katzenpostServerSettings.address)
                 KatzenpostService.stopService(context)
             }
 
-            override fun getRefreshInterval() = 60
+            override fun getRefreshInterval() = 60 * 1000
 
             override fun setLastRefresh(lastRefresh: Long) {
                 lastRefreshValue = lastRefresh
             }
 
             override fun getLastRefresh() = lastRefreshValue
+
+            fun currentTimeMillis() = System.currentTimeMillis()
         }
     }
 
@@ -136,6 +170,6 @@ class KatzenpostBackend(
     }
 
     override fun sendMessage(message: Message) {
-        KatzenpostService.sendMessage(context, katzenpostServerSettings, message)
+        katzenpostClientManager.sendMessage(katzenpostServerSettings, message)
     }
 }
