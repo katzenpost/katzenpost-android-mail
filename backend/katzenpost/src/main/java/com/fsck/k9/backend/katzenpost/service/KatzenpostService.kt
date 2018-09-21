@@ -57,7 +57,7 @@ class KatzenpostService : Service() {
             setSmallIcon(R.drawable.ic_katzenpost)
             setContentTitle("Katzenpost")
             setContentText("Mixin' it up…")
-            priority = NotificationCompat.PRIORITY_MIN
+            priority = NotificationCompat.PRIORITY_DEFAULT
             addAction(0, "View Log", logViewPendingIntent)
             addAction(0, "Close", closeServicePendingIntent)
             setContentIntent(logViewPendingIntent)
