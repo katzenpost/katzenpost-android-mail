@@ -16,7 +16,7 @@ class KatzenpostBackend(
         private val katzenpostClientManager: KatzenpostClientManager
 ) : Backend {
     // private val katzenpostSync: KatzenpostSync = KatzenpostSync(accountUuid, backendStorage, katzenpostStore)
-    private val commandRefreshFolderList = CommandRefreshFolderList(backendStorage)
+    private val commandRefreshFolderList = CommandRefreshFolderList(backendStorage, katzenpostServerSettings.address)
 
     override val supportsSeenFlag = false
     override val supportsExpunge = false
