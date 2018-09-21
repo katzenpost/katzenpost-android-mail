@@ -19,9 +19,12 @@ import java.nio.file.Files
 import java.nio.file.attribute.PosixFilePermission
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.atomic.AtomicBoolean
 
 private data class KatzenpostClientState(
         val client: Client,
+        internal val serverSettings: KatzenpostServerSettings,
+        internal val isShutdown: AtomicBoolean,
         internal var pushReceiver: PushReceiver,
         internal var pollThread: Thread,
         internal val receiveQueue: ConcurrentLinkedQueue<String>
@@ -34,10 +37,13 @@ class KatzenpostClientManager(val context: Context) {
     fun sendMessage(settings: KatzenpostServerSettings, message: Message) {
         val clientState = clientStateMap[settings.address]
         if (clientState != null) {
+            if (clientState.isShutdown.get()) {
+                throw MessagingException("Katzenpost client not connected! (was shut down)")
+            }
             sendMessage(clientState, message)
         } else {
             Timber.w("No client state for %s on poll!", settings.address)
-            throw MessagingException("Katzenpost client not connected for %s!")
+            throw MessagingException("Katzenpost client not connected!")
         }
     }
 
@@ -69,33 +75,35 @@ class KatzenpostClientManager(val context: Context) {
 
     fun pollMessage(settings: KatzenpostServerSettings): String? {
         val clientState = clientStateMap[settings.address]
-        if (clientState != null) {
-            return clientState.receiveQueue.poll()
+        return if (clientState != null) {
+            if (clientState.isShutdown.get()) {
+                Timber.w("Client was shut down for %s on poll!", settings.address)
+            }
+            clientState.receiveQueue.poll()
         } else {
             Timber.w("No client state for %s on poll!", settings.address)
-            return null
+            null
         }
     }
 
     fun registerKatzenpostClient(settings: KatzenpostServerSettings, pushReceiver: PushReceiver) {
-        getOrCreateKatzenpostClientState(settings, pushReceiver)
+        if (!clientStateMap.containsKey(settings.address)) {
+            clientStateMap[settings.address] = createNewClientState(settings, pushReceiver)
+        }
     }
 
-    private fun getOrCreateKatzenpostClientState(settings: KatzenpostServerSettings, pushReceiver: PushReceiver): KatzenpostClientState {
-        return clientStateMap.getOrPut(settings.address) { create(settings, pushReceiver) }
-    }
-
-    private fun create(settings: KatzenpostServerSettings, pushReceiver: PushReceiver): KatzenpostClientState {
+    private fun createNewClientState(settings: KatzenpostServerSettings, pushReceiver: PushReceiver): KatzenpostClientState {
         val config = createConfig(settings)
         val client = Katzenpost.new_(config)
         val receiveQueue = ConcurrentLinkedQueue<String>()
-        val pollThread = KatzenpostMessagePollThread(client) { sender, body ->
+        val isShutdown = AtomicBoolean(false)
+        val pollThread = KatzenpostMessagePollThread("Katzenpost/${settings.address}", client, isShutdown) { _, body ->
             receiveQueue.offer(body)
             pushReceiver.syncFolder("INBOX", null)
         }
         pollThread.start()
 
-        return KatzenpostClientState(client, pushReceiver, pollThread, receiveQueue)
+        return KatzenpostClientState(client, settings, isShutdown, pushReceiver, pollThread, receiveQueue)
     }
 
     private fun createConfig(settings: KatzenpostServerSettings): Config {
@@ -132,13 +140,17 @@ class KatzenpostClientManager(val context: Context) {
     }
 
     fun refreshAll() {
-        // TODO
+        clientStateMap.filter { it.value.isShutdown.get() } .forEach { address, oldState ->
+            Timber.d("Refreshing Katzenpost client %s", address)
+            val newClientState = createNewClientState(oldState.serverSettings, oldState.pushReceiver)
+            clientStateMap[address] = newClientState
+        }
     }
 
     fun stopAll() {
         for (k in clientStateMap) {
+            k.value.isShutdown.set(true)
             k.value.pollThread.interrupt()
-            clientStateMap.remove(k.key)
         }
     }
 
@@ -148,26 +160,67 @@ class KatzenpostClientManager(val context: Context) {
     }
 }
 
-private class KatzenpostMessagePollThread(
-        private val client: Client,
-        private val onReceiveCallback: (sender: String, message: String) -> Unit
-) : Thread() {
-    override fun run() {
-        client.waitToConnect()
+const val MAXATTEMPTS = 10
 
-        while (!Thread.interrupted()) {
-            try {
-                val msg = client.getMessage(10 * 60 * 1000)
-                if (msg != null) {
-                    onReceiveCallback(msg.sender, msg.payload)
+private class KatzenpostMessagePollThread(
+        threadName: String,
+        private val client: Client,
+        private val isShutdown: AtomicBoolean,
+        private val onReceiveCallback: (sender: String, message: String) -> Unit
+) : Thread(threadName) {
+    override fun run() {
+        try {
+            var attempts = 1
+            while (!Thread.interrupted() && !isShutdown.get()) {
+                Timber.d("$name: Waiting to connect ($attempts/$MAXATTEMPTS)…")
+                val connected = client.waitToConnect(6 * 1000)
+                if (connected) {
+                    Timber.d("$name: Connected!")
+                    break
                 }
-                // just make sure we don't super-hotloop
-                Thread.sleep(1000)
-            } catch (e: InterruptedException) {
-                // nvm
+                attempts += 1
+                if (attempts > MAXATTEMPTS) {
+                    throw(Exception("Timeout waiting to connect!"))
+                }
+
             }
+        } catch (e: Exception) {
+            Timber.e(e, "$name: Failed to connect!")
+            shutdownSilently()
+            return
         }
 
-        client.shutdown()
+        try {
+            while (!Thread.interrupted() && !isShutdown.get()) {
+                Timber.d("$name: Looping…")
+                try {
+                    val msg = client.getMessage(10 * 60 * 1000)
+                    if (msg != null) {
+                        Timber.d("$name: Got a message!")
+                        onReceiveCallback(msg.sender, msg.payload)
+                    }
+                    // just make sure we don't super-hotloop
+                    Thread.sleep(1000)
+                } catch (e: InterruptedException) {
+                    Timber.d("$name: Interrupted!")
+                    // nvm
+                } catch (e: Exception) {
+                    Timber.e(e, "$name: Error waiting for message!")
+                    break
+                }
+            }
+        } finally {
+            shutdownSilently()
+        }
+    }
+
+    fun shutdownSilently() {
+        try {
+            isShutdown.set(true)
+            Timber.d("$name: Shutting down")
+            client.shutdown()
+        } catch (e: Exception) {
+            Timber.e(e)
+        }
     }
 }
