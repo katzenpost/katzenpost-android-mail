@@ -278,10 +278,10 @@ public class FolderList extends K9ListActivity {
             return;
         }
 
-        ChangeLog cl = new ChangeLog(this);
-        if (cl.isFirstRun()) {
-            cl.getLogDialog().show();
-        }
+//        ChangeLog cl = new ChangeLog(this);
+//        if (cl.isFirstRun()) {
+//            cl.getLogDialog().show();
+//        }
     }
 
     @SuppressLint("InflateParams")
