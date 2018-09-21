@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (C) 2015 Pedro Vicente Gomez Sanchez.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~ http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+  <ImageView
+      android:id="@+id/iv_lynx_icon"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_alignParentTop="true"
+      android:layout_marginTop="@dimen/lynx_icon_margin_top"
+      android:src="@drawable/ic_lynx"/>
+
+  <Button
+      android:id="@+id/bt_show_lynx_activity"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/bt_show_lynx_view"
+      android:layout_centerHorizontal="true"
+      android:layout_margin="@dimen/button_margin"
+      android:text="@string/show_lynx_activity"/>
+
+  <Button
+      android:id="@+id/bt_show_lynx_view"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_above="@+id/tv_info"
+      android:layout_centerHorizontal="true"
+      android:layout_margin="@dimen/button_margin"
+      android:text="@string/show_lynx_view"/>
+
+  <TextView
+      android:id="@+id/tv_info"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_centerHorizontal="true"
+      android:layout_alignParentBottom="true"
+      android:layout_margin="@dimen/text_view_margin"
+      android:text="@string/shake_to_show_lynx_view"
+      android:gravity="center"/>
+
+  <com.github.pedrovgs.lynx.LynxView
+      xmlns:lynx="http://schemas.android.com/apk/res-auto"
+      android:id="@+id/lynx_view"
+      android:layout_width="match_parent"
+      android:layout_height="@dimen/lynx_view_height"
+      android:visibility="gone"
+      lynx:filter="Lynx"
+      lynx:max_traces_to_show="1500"
+      lynx:text_size="12sp"
+      lynx:sampling_rate="200"/>
+
+</RelativeLayout>

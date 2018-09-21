@@ -1,6 +1,7 @@
 package com.fsck.k9.backend.katzenpost.service
 
 import android.app.Notification
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,7 @@ import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
 import com.fsck.k9.backend.katzenpost.R
+import com.fsck.k9.ui.misc.KatzenpostLogViewer
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -25,10 +27,10 @@ class KatzenpostService : Service() {
     }
 
     private fun refreshAllClients() {
-        katzenpostClientManager.refreshAll()
-
         val notification = getNotification()
         startForeground(1234567, notification)
+
+        katzenpostClientManager.refreshAll()
     }
 
     private fun stopAllClients() {
@@ -39,12 +41,27 @@ class KatzenpostService : Service() {
     }
 
     private fun getNotification(): Notification {
-        val builder = NotificationCompat.Builder(this)
-        builder.setSmallIcon(R.drawable.ic_katzenpost)
-        builder.setContentTitle("Katzenpost")
-        builder.setContentText("Mixin' it up…")
-        builder.priority = NotificationCompat.PRIORITY_MIN
-        return builder.build()
+        val logViewIntent = Intent(this, KatzenpostLogViewer::class.java).apply {
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        val logViewPendingIntent = PendingIntent.getActivity(
+                applicationContext, 0, logViewIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val closeServiceIntent = Intent(this, KatzenpostService::class.java).apply {
+            action = "stop"
+        }
+        val closeServicePendingIntent = PendingIntent.getService(
+                applicationContext, 0, closeServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        return NotificationCompat.Builder(this).apply {
+            setSmallIcon(R.drawable.ic_katzenpost)
+            setContentTitle("Katzenpost")
+            setContentText("Mixin' it up…")
+            priority = NotificationCompat.PRIORITY_MIN
+            addAction(0, "View Log", logViewPendingIntent)
+            addAction(0, "Close", closeServicePendingIntent)
+            setContentIntent(logViewPendingIntent)
+        }.build()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
