@@ -19,7 +19,7 @@ dependencies {
     implementation "com.jakewharton.timber:timber:${versions.timber}"
     implementation 'com.squareup.okhttp3:okhttp:3.11.0'
 
-    implementation 'katzenpost.5:katzenpost:dev@aar'
+    implementation 'katzenpost.6:katzenpost:dev@aar'
 
     testImplementation project(":mail:testing")
     testImplementation "junit:junit:${versions.junit}"
