@@ -15,7 +15,8 @@ class KatzenpostSignupInteractor {
 
     fun requestNameReservation(providerName: String): NameReservationToken {
         Thread.sleep(1000)
-        return NameReservationToken(providerName, "LazyBones" + Random().nextInt(1000))
+        val name = KatzenpostNameGenerator.getRandomName()
+        return NameReservationToken(providerName, name)
     }
 
     @Throws(RegistrationException::class)
@@ -46,13 +47,13 @@ class KatzenpostSignupInteractor {
                 .build()
 
         try {
-            val response = httpClient.newCall(request).execute()
+            httpClient.newCall(request).execute().use { response ->
+                if (!response.isSuccessful) {
+                    throw RegistrationResponseException("Got negative response: ${response.code()}")
+                }
 
-            if (!response.isSuccessful) {
-                throw RegistrationResponseException("Got negative response: ${response.code()}")
+                return response
             }
-
-            return response
         } catch (e: IOException) {
             throw RegistrationNetworkException(e)
         }
