@@ -60,6 +60,7 @@
         android:layout_marginTop="12dp"
         android:text="Get Started"
         android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+        android:padding="16dp"
         />
 
 </LinearLayout>
