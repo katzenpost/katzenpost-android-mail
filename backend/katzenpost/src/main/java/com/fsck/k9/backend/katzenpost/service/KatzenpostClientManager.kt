@@ -155,8 +155,10 @@ class KatzenpostClientManager(val context: Context) {
     }
 
     companion object {
-        private const val PKI_ADDRESS = "95.179.156.72:29483"
-        private const val PKI_PINNED_PUBLIC_KEY = "o4w1Nyj/nKNwho5SWfAIfh7SMU8FRx52nMHGgYsMHqQ="
+        private const val PKI_ADDRESS = "37.218.242.147:29485"
+        private const val PKI_PINNED_PUBLIC_KEY = "39Xhom6bPvez2gECACuTxm/DaxLRTGCMP7/KA78+vNw="
+//        private const val PKI_ADDRESS = "95.179.156.72:29483"
+//        private const val PKI_PINNED_PUBLIC_KEY = "o4w1Nyj/nKNwho5SWfAIfh7SMU8FRx52nMHGgYsMHqQ="
     }
 }
 

@@ -80,7 +80,11 @@ class KatzenpostService : Service() {
         fun stopService(context: Context) {
             val intent = Intent(context, KatzenpostService::class.java)
             intent.action = "stop"
-            context.startService(intent)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                context.startForegroundService(intent)
+            } else {
+                context.startService(intent)
+            }
         }
     }
 }

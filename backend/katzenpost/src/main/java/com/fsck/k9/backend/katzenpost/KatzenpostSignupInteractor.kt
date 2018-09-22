@@ -61,7 +61,9 @@ class KatzenpostSignupInteractor {
 
     companion object {
         private val PROVIDER_HOSTS = mapOf(
-                "playground" to "https://playground.katzenpost.mixnetworks.org:61532/registration"
+                "idefix" to "https://idefix.katzenpost.mixnetworks.org:39484/registration",
+                "ramix" to "https://ramix.katzenpost.mixnetworks.org:39484/registration"
+//                "playground" to "https://playground.katzenpost.mixnetworks.org:61532/registration"
         )
     }
 }
