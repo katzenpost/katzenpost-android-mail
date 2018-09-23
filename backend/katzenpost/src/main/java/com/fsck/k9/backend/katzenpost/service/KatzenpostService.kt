@@ -8,8 +8,14 @@ import android.content.Intent
 import android.os.Build
 import android.os.IBinder
 import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import com.fsck.k9.backend.katzenpost.R
 import com.fsck.k9.ui.misc.KatzenpostLogViewer
+import kotlinx.coroutines.experimental.Dispatchers
+import kotlinx.coroutines.experimental.GlobalScope
+import kotlinx.coroutines.experimental.android.Main
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
@@ -30,17 +36,24 @@ class KatzenpostService : Service() {
         val notification = getNotification()
         startForeground(1234567, notification)
 
+        katzenpostClientManager.notificationReceiver = notificationReceiver
         katzenpostClientManager.refreshAll()
     }
 
     private fun stopAllClients() {
+        katzenpostClientManager.notificationReceiver = null
         katzenpostClientManager.stopAll()
 
         stopForeground(true)
         stopSelf()
     }
 
-    private fun getNotification(): Notification {
+    private fun refreshForegroundNotification(text: String) {
+        val notification = getNotification(text)
+        NotificationManagerCompat.from(this).notify(1234567, notification)
+    }
+
+    private fun getNotification(text: String? = null): Notification {
         val logViewIntent = Intent(this, KatzenpostLogViewer::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
@@ -56,15 +69,25 @@ class KatzenpostService : Service() {
         return NotificationCompat.Builder(this).apply {
             setSmallIcon(R.drawable.ic_katzenpost)
             setContentTitle("Katzenpost")
-            setContentText("Mixin' it up…")
+            text?.let { setContentText(it) }
             priority = NotificationCompat.PRIORITY_DEFAULT
             addAction(0, "View Log", logViewPendingIntent)
-            addAction(0, "Close", closeServicePendingIntent)
+            // addAction(0, "Close", closeServicePendingIntent)
             setContentIntent(logViewPendingIntent)
         }.build()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
+
+    private val statusMap = mutableMapOf<String,String>()
+    private val notificationReceiver = object : KatzenpostNotificationReceiver {
+
+        override fun setStatusLine(identifier: String, line: String) {
+            statusMap[identifier] = line
+            val text = statusMap.map { "${it.key}: ${it.value}" } .joinToString("\n")
+            refreshForegroundNotification(text)
+        }
+    }
 
     companion object {
         fun ensureForegroundService(context: Context) {

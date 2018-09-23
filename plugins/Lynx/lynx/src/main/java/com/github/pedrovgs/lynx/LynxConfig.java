@@ -36,7 +36,7 @@ public class LynxConfig implements Serializable, Cloneable {
 
   private static final float DEFAULT_TEXT_SIZE_IN_PX = 36;
 
-  private int maxNumberOfTracesToShow = 2500;
+  private int maxNumberOfTracesToShow = 150;
   private String filter;
   private TraceLevel filterTraceLevel;
   private Float textSizeInPx;

@@ -32,6 +32,7 @@ private data class KatzenpostClientState(
 
 class KatzenpostClientManager(val context: Context) {
     private val clientStateMap: MutableMap<String,KatzenpostClientState> = mutableMapOf()
+    var notificationReceiver: KatzenpostNotificationReceiver? = null
 
     @Throws(MessagingException::class)
     fun sendMessage(settings: KatzenpostServerSettings, message: Message) {
@@ -97,7 +98,9 @@ class KatzenpostClientManager(val context: Context) {
         val client = Katzenpost.new_(config)
         val receiveQueue = ConcurrentLinkedQueue<String>()
         val isShutdown = AtomicBoolean(false)
-        val pollThread = KatzenpostMessagePollThread("Katzenpost/${settings.address}", client, isShutdown) { _, body ->
+        val pollThread = KatzenpostMessagePollThread("Katzenpost/${settings.address}", client, isShutdown, {
+            notificationReceiver?.setStatusLine(settings.address, it)
+        }) { _, body ->
             receiveQueue.offer(body)
             pushReceiver.syncFolder("INBOX", null)
         }
@@ -148,6 +151,7 @@ class KatzenpostClientManager(val context: Context) {
     }
 
     fun stopAll() {
+        notificationReceiver = null
         for (k in clientStateMap) {
             k.value.isShutdown.set(true)
             k.value.pollThread.interrupt()
@@ -168,15 +172,20 @@ private class KatzenpostMessagePollThread(
         threadName: String,
         private val client: Client,
         private val isShutdown: AtomicBoolean,
+        private val statusMsgCallback: (text: String) -> Unit,
         private val onReceiveCallback: (sender: String, message: String) -> Unit
 ) : Thread(threadName) {
     override fun run() {
         try {
+            Thread.sleep(1000)
+
+            statusMsgCallback("Connecting…")
             var attempts = 1
             while (!Thread.interrupted() && !isShutdown.get()) {
                 Timber.d("$name: Waiting to connect ($attempts/$MAXATTEMPTS)…")
                 val connected = client.waitToConnect(6 * 1000)
                 if (connected) {
+                    statusMsgCallback("Connected!")
                     Timber.d("$name: Connected!")
                     break
                 }
@@ -187,17 +196,22 @@ private class KatzenpostMessagePollThread(
 
             }
         } catch (e: Exception) {
+            statusMsgCallback("Failed to connect!")
             Timber.e(e, "$name: Failed to connect!")
             shutdownSilently()
             return
         }
 
+        Thread.sleep(1000)
+
         try {
             while (!Thread.interrupted() && !isShutdown.get()) {
+                statusMsgCallback("Listening for messages…")
                 Timber.d("$name: Looping…")
                 try {
-                    val msg = client.getMessage(10 * 60 * 1000)
+                    val msg = client.getMessage(15 * 1000)
                     if (msg != null) {
+                        statusMsgCallback("Received a message")
                         Timber.d("$name: Got a message!")
                         onReceiveCallback(msg.sender, msg.payload)
                     }
@@ -207,10 +221,12 @@ private class KatzenpostMessagePollThread(
                     Timber.d("$name: Interrupted!")
                     // nvm
                 } catch (e: Exception) {
+                    statusMsgCallback("Connection error")
                     Timber.e(e, "$name: Error waiting for message!")
                     break
                 }
             }
+            statusMsgCallback("Shutting down…")
         } finally {
             shutdownSilently()
         }
@@ -225,4 +241,8 @@ private class KatzenpostMessagePollThread(
             Timber.e(e)
         }
     }
+}
+
+interface KatzenpostNotificationReceiver {
+    fun setStatusLine(identifier: String, line: String)
 }
