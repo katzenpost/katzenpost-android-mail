@@ -36,3 +36,11 @@ Building the project depends on the [Android SDK](https://developer.android.com/
 2. `./gradlew app:k9mail:assembleDebug`
 3. `adb install -r app/k9mail/build/outputs/apk/debug/k9mail-debug.apk`
 
+
+# Supported by
+
+![](https://katzenpost.mixnetworks.org/_static/images/eu-flag-tiny.jpg)
+
+This project has received funding from the European Union’s Horizon 2020
+research and innovation programme under the Grant Agreement No 653497, Privacy
+and Accountability in Networks via Optimized Randomized Mix-nets (Panoramix).
