@@ -40,11 +40,11 @@ android {
     buildToolsVersion buildConfig.buildTools
 
     defaultConfig {
-        applicationId "horse.amazin.my.katzenpost"
+        applicationId "horse.amazin.my.l10" // for play store management reasons
         testApplicationId "horse.amazin.my.katzenpost.tests"
 
-        versionCode 1
-        versionName '0.01'
+        versionCode 8
+        versionName '0.3'
 
         minSdkVersion buildConfig.minSdk
         targetSdkVersion 22
@@ -55,14 +55,17 @@ android {
     }
 
     signingConfigs {
-        release
+        release {
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
+            keyPassword RELEASE_KEY_PASSWORD
+        }
     }
 
     buildTypes {
         release {
-            if (project.hasProperty('storeFile')) {
-                signingConfig signingConfigs.release
-            }
+            signingConfig signingConfigs.release
 
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

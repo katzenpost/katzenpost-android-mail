@@ -11,11 +11,6 @@ import android.support.v4.app.NotificationCompat
 import android.support.v4.app.NotificationManagerCompat
 import com.fsck.k9.backend.katzenpost.R
 import com.fsck.k9.ui.misc.KatzenpostLogViewer
-import kotlinx.coroutines.experimental.Dispatchers
-import kotlinx.coroutines.experimental.GlobalScope
-import kotlinx.coroutines.experimental.android.Main
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import org.koin.android.ext.android.inject
 import timber.log.Timber
 
