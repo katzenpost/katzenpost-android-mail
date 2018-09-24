@@ -35,8 +35,8 @@ class KatzenpostWelcomeActivity : K9Activity() {
         buttonGetStarted.setOnClickListener {
             val setupActivityIntent = KatzenpostSetupActivity.getSetupActivityIntent(this)
             val sceneTransitionAnimation = ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                    Pair.create(findViewById(android.R.id.statusBarBackground), Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME),
-                    Pair.create(findViewById(android.R.id.navigationBarBackground), Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME),
+//                    Pair.create(findViewById(android.R.id.statusBarBackground), Window.STATUS_BAR_BACKGROUND_TRANSITION_NAME),
+//                    Pair.create(findViewById(android.R.id.navigationBarBackground), Window.NAVIGATION_BAR_BACKGROUND_TRANSITION_NAME),
                     Pair.create(logo, "logo")
             )
             ActivityCompat.startActivityForResult(this, setupActivityIntent, 0, sceneTransitionAnimation.toBundle())
