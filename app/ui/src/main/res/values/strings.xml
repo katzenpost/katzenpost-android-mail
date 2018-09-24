@@ -7,24 +7,24 @@
     <!-- Used in AndroidManifest.xml -->
     <string name="app_name">Katzenpost</string>
 
-    <string name="shortcuts_title">K-9 Accounts</string>
-    <string name="unread_widget_label">K-9 Unread</string>
+    <string name="shortcuts_title">Katzenpost Accounts</string>
+    <string name="unread_widget_label">Katzenpost Unread</string>
 
-    <string name="remote_control_label">K-9 Mail remote control</string>
-    <string name="remote_control_desc">Allows this application to control K-9 Mail activities and settings.</string>
+    <string name="remote_control_label">Katzenpost remote control</string>
+    <string name="remote_control_desc">Allows this application to control Katzenpost activities and settings.</string>
 
 
     <!-- Used in the about dialog -->
-    <string name="app_authors">The K-9 Dog Walkers</string>
-    <string name="app_copyright_fmt">Copyright 2008-<xliff:g>%s</xliff:g> The K-9 Dog Walkers. Portions Copyright 2006-<xliff:g>%s</xliff:g> the Android Open Source Project.</string>
+    <string name="app_authors">Katzenpost</string>
+    <string name="app_copyright_fmt">Copyright 2008-<xliff:g>%s</xliff:g> The Katzenpost Dog Walkers. Portions Copyright 2006-<xliff:g>%s</xliff:g> the Android Open Source Project.</string>
     <string name="app_license">Licensed under the Apache License, Version 2.0.</string>
 
 
     <!-- Welcome message -->
-    <string name="welcome_message_title">Welcome to K-9 Mail</string>
+    <string name="welcome_message_title">Welcome to Katzenpost</string>
     <string name="accounts_welcome"><![CDATA[
 <p>
-K-9 Mail is a powerful free email client for Android.
+Katzenpost is a powerful free email client for Android.
 </p><p>
 Its improved features include:
 </p>
@@ -45,7 +45,7 @@ Its improved features include:
   <li>…and more</li>
 </ul>
 <p>
-Please note that K-9 does not support most free Hotmail accounts and, like many mail clients, has
+Please note that Katzenpost does not support most free Hotmail accounts and, like many mail clients, has
 some quirks when talking to Microsoft Exchange.
 </p><p>
 Please submit bug reports, contribute new features and ask questions at
@@ -55,11 +55,11 @@ Please submit bug reports, contribute new features and ask questions at
 
 
     <!-- Default signature -->
-    <string name="default_signature">-- \nSent from my Android device with K-9 Mail. Please excuse my brevity.</string>
+    <string name="default_signature">-- \nSent from my Android device with Katzenpost. Please excuse my brevity.</string>
 
 
     <!-- General strings that include the app name -->
-    <string name="account_delete_dlg_instructions_fmt">The account \"<xliff:g id="account">%s</xliff:g>\" will be removed from K-9 Mail.</string>
+    <string name="account_delete_dlg_instructions_fmt">The account \"<xliff:g id="account">%s</xliff:g>\" will be removed from Katzenpost.</string>
     <string name="account_recreate_dlg_instructions_fmt">All local data for \"<xliff:g id="account">%s</xliff:g>\" will be removed. Account settings will be retained.</string>
     <string name="account_clear_dlg_instructions_fmt">Local copies of messages in \"<xliff:g id="account">%s</xliff:g>\" will be removed. Account settings will be retained.</string>
 
@@ -78,10 +78,10 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="app_revision_fmt">Revision Information: <xliff:g id="app_revision_url">%s</xliff:g></string>
     <string name="app_libraries">We\'re using the following third-party libraries: <xliff:g id="app_libraries_list">%s</xliff:g></string>
 
-    <string name="read_messages_label">Read Emails</string>
-    <string name="read_messages_desc">Allows this application to read your Emails.</string>
-    <string name="delete_messages_label">Delete Emails</string>
-    <string name="delete_messages_desc">Allows this application to delete your Emails.</string>
+    <string name="read_messages_label">Read Messages</string>
+    <string name="read_messages_desc">Allows this application to read your Messages.</string>
+    <string name="delete_messages_label">Delete Messages</string>
+    <string name="delete_messages_desc">Allows this application to delete your Messages.</string>
 
     <string name="about_title_fmt">About <xliff:g id="app_name">%s</xliff:g></string>
     <string name="accounts_title">Accounts</string>
@@ -273,7 +273,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="message_compose_reply_header_fmt_with_date">On <xliff:g id="sent_date">%1$s</xliff:g>, <xliff:g id="sender">%2$s</xliff:g> wrote:</string>
     <string name="message_compose_error_no_recipients">You must add at least one recipient.</string>
     <string name="compose_error_incomplete_recipient">Recipient field contains incomplete input!</string>
-    <string name="error_contact_address_not_found">No email address could be found for this contact.</string>
+    <string name="error_contact_address_not_found">No address could be found for this contact.</string>
     <string name="message_compose_attachments_skipped_toast">Some attachments cannot be forwarded because they have not been downloaded.</string>
     <string name="message_compose_attachments_forward_toast">The message cannot be forwarded because some attachments have not been downloaded.</string>
     <string name="message_compose_show_quoted_text_action">Include quoted message</string>
@@ -311,7 +311,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="global_settings_checkbox_summary">Always show multi-select checkboxes</string>
     <string name="global_settings_preview_lines_label">Preview lines</string>
     <string name="global_settings_show_correspondent_names_label">Show correspondent names</string>
-    <string name="global_settings_show_correspondent_names_summary">Show correspondent names rather than their email addresses</string>
+    <string name="global_settings_show_correspondent_names_summary">Show correspondent names rather than their addresses</string>
 
     <string name="global_settings_sender_above_subject_label">Correspondent above subject</string>
     <string name="global_settings_sender_above_subject_summary">Show correspondent names above the subject line, rather than below it</string>
@@ -343,7 +343,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="global_settings_confirm_action_delete_notif">Delete (from notification)</string>
 
     <string name="global_settings_privacy_hide_useragent">Hide mail client</string>
-    <string name="global_settings_privacy_hide_useragent_detail">Remove K-9 User-Agent from mail headers</string>
+    <string name="global_settings_privacy_hide_useragent_detail">Remove Katzenpost User-Agent from mail headers</string>
     <string name="global_settings_privacy_hide_timezone">Hide timezone</string>
     <string name="global_settings_privacy_hide_timezone_detail">Use UTC instead of local timezone in mail headers and reply header</string>
     <string name="global_settings_privacy_hide_hostname_when_connecting">Hide hostname</string>
@@ -374,7 +374,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="quiet_time_ends">Quiet Time ends</string>
 
     <string name="account_setup_basics_title">Set up a new account</string>
-    <string name="account_setup_basics_email_hint">Email address</string>
+    <string name="account_setup_basics_email_hint">Address</string>
     <string name="account_setup_basics_password_hint">Password</string>
     <string name="account_setup_basics_show_password">Show password</string>
     <string name="account_setup_basics_manual_setup_action">Manual setup</string>
@@ -542,7 +542,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="account_settings_folder_notify_new_mail_mode_none">None</string>
 
     <string name="account_settings_notify_sync_label">Sync notifications</string>
-    <string name="account_settings_email_label">Your email address</string>
+    <string name="account_settings_email_label">Your address</string>
     <string name="account_settings_notify_summary">Notify in status bar when mail arrives</string>
     <string name="account_settings_notify_sync_summary">Notify in status bar while mail is checked</string>
     <string name="account_settings_notify_self_label">Include outgoing mail</string>
@@ -751,7 +751,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="edit_identity_description_hint">(Optional)</string>
     <string name="edit_identity_name_label">Your name</string>
     <string name="edit_identity_name_hint">(Optional)</string>
-    <string name="edit_identity_email_label">Email address</string>
+    <string name="edit_identity_email_label">Address</string>
     <string name="edit_identity_email_hint">(Required)</string>
     <string name="edit_identity_reply_to_label">Reply-to address</string>
     <string name="edit_identity_reply_to_hint">(Optional)</string>
@@ -766,7 +766,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="send_as">Send as</string>
 
     <string name="no_removable_identity">You can\'t remove your only identity</string>
-    <string name="identity_has_no_email">You can\'t use an identity without an email address</string>
+    <string name="identity_has_no_email">You can\'t use an identity without an address</string>
 
     <string name="sort_earliest_first">Earliest messages first</string>
     <string name="sort_latest_first">Latest messages first</string>
@@ -1074,10 +1074,10 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="webview_contextmenu_phone_copy_action">Copy number to clipboard</string>
     <string name="webview_contextmenu_phone_clipboard_label">Phone number</string>
 
-    <string name="webview_contextmenu_email_send_action">Send mail</string>
+    <string name="webview_contextmenu_email_send_action">Send message</string>
     <string name="webview_contextmenu_email_save_action">Save to Contacts</string>
     <string name="webview_contextmenu_email_copy_action">Copy address to clipboard</string>
-    <string name="webview_contextmenu_email_clipboard_label">Email address</string>
+    <string name="webview_contextmenu_email_clipboard_label">Address</string>
 
     <string name="image_saved_as">Saved image as \"<xliff:g id="filename">%s</xliff:g>\"</string>
     <string name="image_saving_failed">Saving the image failed.</string>
@@ -1188,7 +1188,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="enable_sign_only">Enable PGP Sign-Only</string>
     <string name="disable_sign_only">Disable PGP Sign-Only</string>
     <string name="openpgp_inline_title">PGP/INLINE Mode</string>
-    <string name="openpgp_inline_text">The email is sent in PGP/INLINE format.\nThis should only be used for compatibility:</string>
+    <string name="openpgp_inline_text">The message is sent in PGP/INLINE format.\nThis should only be used for compatibility:</string>
     <string name="openpgp_inline_plus_compat">Some clients only support this format</string>
     <string name="openpgp_inline_minus_transit">Signatures may break during transit</string>
     <string name="openpgp_inline_minus_attach">Attachments are not supported</string>
@@ -1256,7 +1256,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="messageview_decrypt_cancelled">Decryption was cancelled.</string>
     <string name="messageview_decrypt_retry">Retry</string>
     <string name="messageview_decrypt_incomplete">Encrypted message must be downloaded for decryption.</string>
-    <string name="messageview_crypto_error_title">Error decrypting email</string>
+    <string name="messageview_crypto_error_title">Error decrypting message</string>
 
     <string name="recipient_error_non_ascii">Special characters are currently not supported!</string>
     <string name="recipient_error_parse_failed">Error parsing address!</string>
@@ -1267,18 +1267,18 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="unsigned_text_divider_label">Unsigned Text</string>
     <string name="apg_deprecated_title">APG Deprecation Warning</string>
     <string name="apg_deprecated_1">APG is no longer maintained!</string>
-    <string name="apg_deprecated_2">Because of this, support for APG has been removed from K-9 Mail.</string>
+    <string name="apg_deprecated_2">Because of this, support for APG has been removed from Katzenpost.</string>
     <string name="apg_deprecated_bullet_1">Development stopped in early 2014</string>
     <string name="apg_deprecated_bullet_2">Contains unfixed security issues</string>
     <string name="apg_learn_more">You can <a href="https://k9mail.github.io/2017/01/13/Why-APG-is-no-longer-supported.html">click here</a> to learn more.</string>
     <string name="apg_deprecated_ok">Got it!</string>
     <string name="apg">APG</string>
     <string name="no_crypto_provider_see_global">No OpenPGP app configured, see global settings!</string>
-    <string name="crypto_no_provider_title">This email is encrypted</string>
-    <string name="crypto_no_provider_message">This email has been encrypted with OpenPGP.\nTo read it, you need to install and configure a compatible OpenPGP App.</string>
+    <string name="crypto_no_provider_title">This message is encrypted</string>
+    <string name="crypto_no_provider_message">This message has been encrypted with OpenPGP.\nTo read it, you need to install and configure a compatible OpenPGP App.</string>
     <string name="crypto_no_provider_button">Go to Settings</string>
 
-    <string name="mail_list_widget_text">K-9 Message List</string>
+    <string name="mail_list_widget_text">Katzenpost Message List</string>
     <string name="mail_list_widget_loading">Loading messages…</string>
     <string name="fetching_folders_failed">Fetching folder list failed</string>
     <string name="messageview_crypto_warning_details">Show Details</string>
@@ -1289,7 +1289,7 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="enable_encryption">Enable Encryption</string>
     <string name="disable_encryption">Disable Encryption</string>
     <string name="openpgp_description_text1">Encrypting messages ensures they can be read by the recipient, and nobody else.</string>
-    <string name="openpgp_description_text3">Encryption will only show up if supported by all recipients, and they must have sent you an email before.</string>
+    <string name="openpgp_description_text3">Encryption will only show up if supported by all recipients, and they must have sent you a message before.</string>
     <string name="openpgp_description_text2">Toggle encryption by clicking this icon.</string>
     <string name="openpgp_enabled_error_gotit">Got it</string>
     <string name="openpgp_enabled_error_back">Back</string>
@@ -1306,7 +1306,7 @@ Please submit bug reports, contribute new features and ask questions at
 
     <string name="dialog_openkeychain_info_title">No OpenPGP app installed</string>
     <string name="dialog_openkeychain_info_install">Install</string>
-    <string name="dialog_openkeychain_info_text">K-9 Mail requires OpenKeychain for end-to-end encryption.</string>
+    <string name="dialog_openkeychain_info_text">Katzenpost requires OpenKeychain for end-to-end encryption.</string>
 
     <string name="encrypted_subject">"Encrypted Message"</string>
     <string name="account_settings_crypto_encrypt_subject">Encrypt message subjects</string>
