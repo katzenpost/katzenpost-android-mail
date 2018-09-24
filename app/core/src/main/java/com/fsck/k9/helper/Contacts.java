@@ -202,6 +202,7 @@ public class Contacts {
      *        contacts to be marked as contacted.
      */
     public void markAsContacted(final Address[] addresses) {
+        if (true) return; // TODO ripped out contacts permission
         //TODO: Optimize! Potentially a lot of database queries
         for (final Address address : addresses) {
             final Cursor c = getContactByAddress(address.getAddress());
@@ -237,6 +238,7 @@ public class Contacts {
      *         no such contact could be found or the contact doesn't have a picture.
      */
     public Uri getPhotoUri(String address) {
+        if (true) return null; // TODO ripped out contacts permission
         try {
             final Cursor c = getContactByAddress(address);
             if (c == null) {
@@ -272,6 +274,7 @@ public class Contacts {
      *         about the contact with the given email address
      */
     private Cursor getContactByAddress(final String address) {
+        if (true) return null; // TODO ripped out contacts permission
         final Uri uri = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Email.CONTENT_LOOKUP_URI, Uri.encode(address));
         return mContentResolver.query(
                 uri,

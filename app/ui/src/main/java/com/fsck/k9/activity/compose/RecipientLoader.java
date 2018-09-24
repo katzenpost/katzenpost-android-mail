@@ -174,14 +174,18 @@ public class RecipientLoader extends AsyncTaskLoader<List<Recipient>> {
         if (addresses != null) {
             fillContactDataFromAddresses(addresses, recipients, recipientMap);
         } else if (contactUri != null) {
+            if (true) return recipients; // TODO ripped out contacts permission
             fillContactDataFromEmailContentUri(contactUri, recipients, recipientMap);
         } else if (query != null) {
+            if (true) return recipients; // TODO ripped out contacts permission
             fillContactDataFromQuery(query, recipients, recipientMap);
 
+            if (true) return recipients; // TODO ripped out contacts permission
             if (cryptoProvider != null) {
                 fillContactDataFromCryptoProvider(query, recipients, recipientMap);
             }
         } else if (lookupKeyUri != null) {
+            if (true) return recipients; // TODO ripped out contacts permission
             fillContactDataFromLookupKey(lookupKeyUri, recipients, recipientMap);
         } else {
             throw new IllegalStateException("loader must be initialized with query or list of addresses!");

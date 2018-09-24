@@ -128,9 +128,10 @@ public class ContactBadge extends ImageView implements OnClickListener {
         contactEmail = emailAddress;
         this.extras = extras;
         if (!lazyLookup) {
-            queryHandler.startQuery(TOKEN_EMAIL_LOOKUP, null,
-                    Uri.withAppendedPath(Email.CONTENT_LOOKUP_URI, Uri.encode(contactEmail)),
-                    EMAIL_LOOKUP_PROJECTION, null, null, null);
+            // TODO ripped out contacts permission
+//            queryHandler.startQuery(TOKEN_EMAIL_LOOKUP, null,
+//                    Uri.withAppendedPath(Email.CONTENT_LOOKUP_URI, Uri.encode(contactEmail)),
+//                    EMAIL_LOOKUP_PROJECTION, null, null, null);
         } else {
             contactUri = null;
             onContactUriChanged();
@@ -152,9 +153,10 @@ public class ContactBadge extends ImageView implements OnClickListener {
                     QuickContact.MODE_LARGE, null);
         } else if (contactEmail != null) {
             extras.putString(EXTRA_URI_CONTENT, contactEmail);
-            queryHandler.startQuery(TOKEN_EMAIL_LOOKUP_AND_TRIGGER, extras,
-                    Uri.withAppendedPath(Email.CONTENT_LOOKUP_URI, Uri.encode(contactEmail)),
-                    EMAIL_LOOKUP_PROJECTION, null, null, null);
+            // TODO ripped out contacts permission
+//            queryHandler.startQuery(TOKEN_EMAIL_LOOKUP_AND_TRIGGER, extras,
+//                    Uri.withAppendedPath(Email.CONTENT_LOOKUP_URI, Uri.encode(contactEmail)),
+//                    EMAIL_LOOKUP_PROJECTION, null, null, null);
         }
     }
 
