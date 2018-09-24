@@ -25,14 +25,23 @@ internal class CommandRefreshFolderList(private val backendStorage: BackendStora
 
     private fun createWelcomeMessage(address: String): MimeMessage {
         val msg = """
-            From: smartypants@playground
+            From: alice@idefix
             To: $address
             Subject: Welcome to Katzenpost!
             Content-Type: text/plain
 
             Hi, welcome to Katzenpost!
 
-            Bla bla bla
+            This is an experimental messaging App that uses the Katzenpost mixnet. You can get an overview of this technology here:
+            https://katzenpost.mixnetworks.org/
+
+            Feel free to respond to this message, I'll reply back to you! Sending a message to a contact for the first time performs an anonymous handshake, which might take a while. It'll be fast after that!
+
+            You can also follow some internals of the mixnet-nodes here:
+            http://logviewer.katzenpost.mixnetworks.org/
+
+            Cheers
+              - Alice
         """.trimIndent()
 
         val mimeMessage = MimeMessage.parseMimeMessage(msg.byteInputStream(), false)
