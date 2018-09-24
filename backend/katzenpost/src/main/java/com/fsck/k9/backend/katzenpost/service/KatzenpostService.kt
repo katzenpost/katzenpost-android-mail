@@ -33,6 +33,8 @@ class KatzenpostService : Service() {
 
         katzenpostClientManager.notificationReceiver = notificationReceiver
         katzenpostClientManager.refreshAll()
+
+        refreshForegroundNotification()
     }
 
     private fun stopAllClients() {
@@ -43,7 +45,8 @@ class KatzenpostService : Service() {
         stopSelf()
     }
 
-    private fun refreshForegroundNotification(text: String) {
+    private fun refreshForegroundNotification() {
+        val text = statusMap.map { "${it.key}: ${it.value}" } .joinToString("\n")
         val notification = getNotification(text)
         NotificationManagerCompat.from(this).notify(1234567, notification)
     }
@@ -79,8 +82,7 @@ class KatzenpostService : Service() {
 
         override fun setStatusLine(identifier: String, line: String) {
             statusMap[identifier] = line
-            val text = statusMap.map { "${it.key}: ${it.value}" } .joinToString("\n")
-            refreshForegroundNotification(text)
+            refreshForegroundNotification()
         }
     }
 
